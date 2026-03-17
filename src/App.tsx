@@ -7,6 +7,9 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import StudentList from './pages/students/StudentList'
 import StudentForm from './pages/students/StudentForm'
+import ProfessionalList from './pages/professionals/ProfessionalList'
+import ProfessionalForm from './pages/professionals/ProfessionalForm'
+import TeacherPortal from './pages/teacher-portal/TeacherPortal'
 import ComingSoon from './pages/ComingSoon'
 import NotFound from './pages/NotFound'
 import { AppProvider } from './context/AppProvider'
@@ -24,6 +27,10 @@ const App = () => (
             <Route path="/alunos" element={<StudentList />} />
             <Route path="/alunos/novo" element={<StudentForm />} />
             <Route path="/alunos/:id" element={<StudentForm />} />
+            <Route path="/profissionais" element={<ProfessionalList />} />
+            <Route path="/profissionais/novo" element={<ProfessionalForm />} />
+            <Route path="/profissionais/:id" element={<ProfessionalForm />} />
+            <Route path="/portal-professor" element={<TeacherPortal />} />
             <Route path="/consultas" element={<ComingSoon title="Consultas e Filtros" />} />
             <Route path="/relatorios" element={<ComingSoon title="Módulo de Relatórios" />} />
             <Route

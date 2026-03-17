@@ -114,3 +114,37 @@ export const MOCK_STUDENTS = [
     observations: 'Mudou de cidade.',
   },
 ]
+
+export const MOCK_PROFESSIONALS = [
+  {
+    id: '1',
+    name: 'Carlos Alberto Silva',
+    education: 'Mestrado',
+    role: 'Professor(a)',
+    segments: ['Ensino Fundamental II'],
+    grades: ['6º Ano', '7º Ano'],
+    classes: ['A', 'C'],
+    status: 'Ativo',
+  },
+  {
+    id: '2',
+    name: 'Ana Lúcia Costa',
+    education: 'Pós Graduação',
+    role: 'Coordenador(a)',
+    segments: [],
+    grades: ['6º Ano', '7º Ano', '8º Ano', '9º Ano'],
+    classes: ['A', 'B', 'C'],
+    status: 'Ativo',
+  },
+  {
+    id: '3',
+    name: 'Juliana Mendes',
+    education: 'Graduação',
+    role: 'Apoio Pedagógico',
+    segments: [],
+    grades: [],
+    classes: [],
+    students: ['1660'], // João Pedro (AEE)
+    status: 'Ativo',
+  },
+]

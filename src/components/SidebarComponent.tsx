@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { Home, Users, Search, FileText, Settings, LogOut } from 'lucide-react'
+import { Home, Users, Search, FileText, Settings, LogOut, Briefcase, BookOpen } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useContext } from 'react'
 import { AppContext } from '@/context/AppProvider'
@@ -20,7 +20,9 @@ export function SidebarComponent() {
 
   const navItems = [
     { title: 'Dashboard', icon: Home, url: '/' },
+    { title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' },
     { title: 'Alunos', icon: Users, url: '/alunos' },
+    { title: 'Profissionais', icon: Briefcase, url: '/profissionais' },
     { title: 'Consultas', icon: Search, url: '/consultas' },
     { title: 'Relatórios', icon: FileText, url: '/relatorios' },
     { title: 'Configurações', icon: Settings, url: '/configuracoes' },
@@ -46,7 +48,7 @@ export function SidebarComponent() {
               {navItems.map((item) => {
                 const isActive =
                   location.pathname === item.url ||
-                  (location.pathname.startsWith('/alunos') && item.url === '/alunos')
+                  (location.pathname.startsWith(item.url) && item.url !== '/')
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={isActive} className="h-10">
