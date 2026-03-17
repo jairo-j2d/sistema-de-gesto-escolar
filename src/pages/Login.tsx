@@ -15,8 +15,12 @@ export default function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    login()
-    navigate('/')
+    const user = login(email)
+    if (user?.role === 'Professor(a)') {
+      navigate('/portal-professor')
+    } else {
+      navigate('/')
+    }
   }
 
   return (
@@ -32,11 +36,11 @@ export default function Login() {
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2 text-left">
-              <Label htmlFor="email">E-mail Corporativo</Label>
+              <Label htmlFor="email">E-mail de Acesso</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@escola.gov.br"
+                placeholder="Ex: admin@escola.gov.br ou carlos@escola.gov.br"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

@@ -1,4 +1,4 @@
-import { Outlet, Navigate } from 'react-router-dom'
+import { Outlet, Navigate, useLocation } from 'react-router-dom'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { SidebarComponent } from './SidebarComponent'
 import { HeaderComponent } from './HeaderComponent'
@@ -7,9 +7,17 @@ import { useContext } from 'react'
 import { AppContext } from '@/context/AppProvider'
 
 export default function Layout() {
-  const { isAuthenticated } = useContext(AppContext)
+  const { isAuthenticated, user } = useContext(AppContext)
+  const location = useLocation()
 
   if (!isAuthenticated) return <Navigate to="/login" replace />
+
+  const isTeacher = user?.role === 'Professor(a)'
+  const isTeacherRoute = location.pathname.startsWith('/portal-professor')
+
+  if (isTeacher && !isTeacherRoute) {
+    return <Navigate to="/portal-professor" replace />
+  }
 
   return (
     <SidebarProvider>

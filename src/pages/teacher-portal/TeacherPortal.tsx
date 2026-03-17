@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
@@ -12,9 +12,33 @@ import { LessonRegistryTab } from './tabs/LessonRegistryTab'
 import { GradesTab } from './tabs/GradesTab'
 import { PlanningTab } from './tabs/PlanningTab'
 import { BookOpen } from 'lucide-react'
+import { AppContext } from '@/context/AppProvider'
 
 export default function TeacherPortal() {
-  const [selectedClass, setSelectedClass] = useState('7º Ano - A')
+  const { user } = useContext(AppContext)
+
+  const availableClasses: string[] = []
+  if (user?.role === 'Professor(a)') {
+    const grades = user.grades || []
+    const classes = user.classes || []
+    grades.forEach((g: string) => {
+      classes.forEach((c: string) => {
+        availableClasses.push(`${g} - ${c}`)
+      })
+    })
+  }
+
+  if (availableClasses.length === 0) {
+    availableClasses.push('6º Ano - C', '7º Ano - A', '8º Ano - B')
+  }
+
+  const [selectedClass, setSelectedClass] = useState(availableClasses[0])
+
+  useEffect(() => {
+    if (availableClasses.length > 0 && !availableClasses.includes(selectedClass)) {
+      setSelectedClass(availableClasses[0])
+    }
+  }, [availableClasses, selectedClass])
 
   return (
     <div className="space-y-6 animate-fade-in pb-24">
@@ -22,8 +46,9 @@ export default function TeacherPortal() {
         <h1 className="text-3xl font-bold tracking-tight text-secondary flex items-center gap-3">
           <BookOpen className="w-8 h-8 text-primary" /> Portal do Professor
         </h1>
-        <p className="text-muted-foreground mt-1">
-          Bem-vindo(a)! Selecione a turma para gerenciar suas atividades pedagógicas.
+        <p className="text-muted-foreground mt-1 text-lg">
+          Olá, <strong className="text-secondary">{user?.name || 'Professor(a)'}</strong>! Selecione
+          a turma para gerenciar suas atividades pedagógicas.
         </p>
       </div>
 
@@ -37,24 +62,11 @@ export default function TeacherPortal() {
               <SelectValue placeholder="Selecione a Turma" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="6º Ano - C">6º Ano - Turma C</SelectItem>
-              <SelectItem value="7º Ano - A">7º Ano - Turma A</SelectItem>
-              <SelectItem value="8º Ano - B">8º Ano - Turma B</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex-1 space-y-1">
-          <label className="text-xs font-semibold text-muted-foreground uppercase">
-            Disciplina
-          </label>
-          <Select defaultValue="matematica">
-            <SelectTrigger className="bg-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="matematica">Matemática</SelectItem>
-              <SelectItem value="portugues">Língua Portuguesa</SelectItem>
-              <SelectItem value="ciencias">Ciências</SelectItem>
+              {availableClasses.map((ac) => (
+                <SelectItem key={ac} value={ac}>
+                  {ac}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -66,19 +78,19 @@ export default function TeacherPortal() {
             value="chamada"
             className="flex-1 py-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-semibold"
           >
-            Chamada Eletrônica
+            Chamada Digital
           </TabsTrigger>
           <TabsTrigger
             value="registro"
             className="flex-1 py-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-semibold"
           >
-            Diário de Classe
+            Diário de Aulas
           </TabsTrigger>
           <TabsTrigger
             value="notas"
             className="flex-1 py-3 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:font-semibold"
           >
-            Lançamento de Notas
+            Gestão de Notas
           </TabsTrigger>
           <TabsTrigger
             value="planejamento"

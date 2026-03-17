@@ -16,9 +16,9 @@ import { AppContext } from '@/context/AppProvider'
 
 export function SidebarComponent() {
   const location = useLocation()
-  const { logout } = useContext(AppContext)
+  const { logout, user } = useContext(AppContext)
 
-  const navItems = [
+  const adminItems = [
     { title: 'Dashboard', icon: Home, url: '/' },
     { title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' },
     { title: 'Alunos', icon: Users, url: '/alunos' },
@@ -27,6 +27,10 @@ export function SidebarComponent() {
     { title: 'Relatórios', icon: FileText, url: '/relatorios' },
     { title: 'Configurações', icon: Settings, url: '/configuracoes' },
   ]
+
+  const teacherItems = [{ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' }]
+
+  const navItems = user?.role === 'Professor(a)' ? teacherItems : adminItems
 
   return (
     <Sidebar className="border-r shadow-sm">
