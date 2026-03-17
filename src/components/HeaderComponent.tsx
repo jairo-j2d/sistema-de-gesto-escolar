@@ -17,11 +17,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 export function HeaderComponent() {
   const location = useLocation()
   const path = location.pathname.split('/').filter(Boolean)
-  const { setAIChatOpen } = useContext(AppContext)
+  const { setAIChatOpen, user } = useContext(AppContext)
 
   return (
-    <header className="h-16 border-b bg-background flex items-center justify-between px-4 sticky top-0 z-30 shadow-sm">
-      <div className="flex items-center gap-4">
+    <header className="h-16 border-b bg-background flex items-center justify-between px-4 sticky top-0 z-30 shadow-sm relative overflow-hidden">
+      <div className="absolute inset-0 bg-pattern-hex-white opacity-50 pointer-events-none filter invert"></div>
+      <div className="flex items-center gap-4 relative z-10">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
         <Breadcrumb className="hidden sm:flex">
           <BreadcrumbList>
@@ -44,7 +45,7 @@ export function HeaderComponent() {
         </Breadcrumb>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 relative z-10">
         <Button
           variant="outline"
           size="sm"
@@ -59,9 +60,15 @@ export function HeaderComponent() {
           <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full"></span>
         </Button>
         <div className="w-px h-6 bg-border mx-1"></div>
+        <div className="hidden md:flex flex-col text-right mr-2">
+          <span className="text-sm font-bold text-secondary">{user?.name}</span>
+          <span className="text-xs text-muted-foreground">{user?.role}</span>
+        </div>
         <Avatar className="w-8 h-8 ring-2 ring-primary/20">
-          <AvatarImage src="https://img.usecurling.com/ppl/thumbnail?gender=female&seed=2" />
-          <AvatarFallback>AD</AvatarFallback>
+          <AvatarImage
+            src={`https://img.usecurling.com/ppl/thumbnail?gender=female&seed=${user?.id || '2'}`}
+          />
+          <AvatarFallback>{user?.name?.substring(0, 2) || 'AD'}</AvatarFallback>
         </Avatar>
       </div>
     </header>

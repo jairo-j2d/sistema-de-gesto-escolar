@@ -11,6 +11,7 @@ import { AttendanceTab } from './tabs/AttendanceTab'
 import { LessonRegistryTab } from './tabs/LessonRegistryTab'
 import { GradesTab } from './tabs/GradesTab'
 import { PlanningTab } from './tabs/PlanningTab'
+import { MessagingHubTab } from './tabs/MessagingHubTab'
 import { BookOpen } from 'lucide-react'
 import { AppContext } from '@/context/AppProvider'
 
@@ -42,23 +43,23 @@ export default function TeacherPortal() {
 
   return (
     <div className="space-y-6 animate-fade-in pb-24">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-secondary flex items-center gap-3">
-          <BookOpen className="w-8 h-8 text-primary" /> Portal do Professor
-        </h1>
-        <p className="text-muted-foreground mt-1 text-lg">
-          Olá, <strong className="text-secondary">{user?.name || 'Professor(a)'}</strong>! Selecione
-          a turma para gerenciar suas atividades pedagógicas.
-        </p>
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xl bg-white p-4 rounded-lg border shadow-sm">
-        <div className="flex-1 space-y-1">
-          <label className="text-xs font-semibold text-muted-foreground uppercase">
+      <div className="relative overflow-hidden bg-white p-6 rounded-xl border shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="absolute inset-0 bg-pattern-hex-white opacity-20 pointer-events-none filter invert"></div>
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold tracking-tight text-secondary flex items-center gap-3">
+            <BookOpen className="w-8 h-8 text-primary" /> Portal do Professor
+          </h1>
+          <p className="text-muted-foreground mt-1 text-lg">
+            Olá, <strong className="text-primary">{user?.name || 'Professor(a)'}</strong>! Selecione
+            a turma para gerenciar suas atividades pedagógicas.
+          </p>
+        </div>
+        <div className="flex-1 w-full md:w-auto md:min-w-[250px] relative z-10 bg-white/80 p-2 rounded-lg backdrop-blur-sm border shadow-sm">
+          <label className="text-xs font-semibold text-muted-foreground uppercase ml-1">
             Turma Ativa
           </label>
           <Select value={selectedClass} onValueChange={setSelectedClass}>
-            <SelectTrigger className="bg-white font-semibold text-secondary">
+            <SelectTrigger className="bg-white font-semibold text-secondary mt-1 border-secondary/20">
               <SelectValue placeholder="Selecione a Turma" />
             </SelectTrigger>
             <SelectContent>
@@ -98,6 +99,13 @@ export default function TeacherPortal() {
           >
             Planejamento
           </TabsTrigger>
+          <TabsTrigger
+            value="mensagens"
+            className="flex-1 py-3 data-[state=active]:bg-secondary/10 data-[state=active]:text-secondary data-[state=active]:font-semibold relative"
+          >
+            Hub de Mensagens
+            <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
+          </TabsTrigger>
         </TabsList>
         <div className="mt-4">
           <TabsContent value="chamada" className="m-0">
@@ -111,6 +119,9 @@ export default function TeacherPortal() {
           </TabsContent>
           <TabsContent value="planejamento" className="m-0">
             <PlanningTab selectedClass={selectedClass} />
+          </TabsContent>
+          <TabsContent value="mensagens" className="m-0">
+            <MessagingHubTab />
           </TabsContent>
         </div>
       </Tabs>

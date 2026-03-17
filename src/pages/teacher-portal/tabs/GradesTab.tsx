@@ -12,13 +12,12 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { MOCK_STUDENTS } from '@/data/mock'
 import { toast } from 'sonner'
-import { GraduationCap, Calculator } from 'lucide-react'
+import { GraduationCap, Calculator, Download } from 'lucide-react'
 
 export function GradesTab({ selectedClass }: { selectedClass: string }) {
   const [grade, classGroup] = selectedClass.split(' - ')
   const students = MOCK_STUDENTS.filter((s) => s.grade === grade && s.classGroup === classGroup)
 
-  // Initialize mock grades
   const [grades, setGrades] = useState<Record<string, any>>({
     '1659': { b1: '8.0', b2: '7.5', b3: '', b4: '' },
     '1660': { b1: '6.0', b2: '6.5', b3: '7.0', b4: '' },
@@ -47,45 +46,69 @@ export function GradesTab({ selectedClass }: { selectedClass: string }) {
 
   const handleSave = () => toast.success('Notas atualizadas e calculadas com sucesso!')
 
+  const handleExportPDF = () => {
+    toast.success('Boletim de Notas exportado com sucesso!', {
+      description: 'O download do PDF foi iniciado.',
+    })
+    const blob = new Blob(['Mock Grades Content'], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `notas-${selectedClass.replace(' ', '')}.pdf`
+    a.click()
+    window.URL.revokeObjectURL(url)
+  }
+
   return (
-    <Card className="shadow-sm">
-      <CardHeader className="border-b bg-muted/10">
-        <CardTitle className="text-lg flex items-center gap-2">
+    <Card className="shadow-sm border-t-4 border-t-secondary relative overflow-hidden">
+      <div className="absolute inset-0 bg-pattern-tri opacity-5 pointer-events-none"></div>
+      <CardHeader className="border-b bg-muted/10 flex flex-row items-center justify-between relative z-10">
+        <CardTitle className="text-lg flex items-center gap-2 text-secondary">
           <GraduationCap className="w-5 h-5 text-primary" /> Painel de Avaliações
         </CardTitle>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleExportPDF}
+          className="border-secondary/20 text-secondary hover:bg-secondary/10"
+        >
+          <Download className="w-4 h-4 mr-2" /> Exportar PDF
+        </Button>
       </CardHeader>
-      <CardContent className="p-0 overflow-x-auto">
+      <CardContent className="p-0 overflow-x-auto relative z-10 bg-white">
         <Table>
           <TableHeader className="bg-muted/20">
             <TableRow>
-              <TableHead>Aluno</TableHead>
-              <TableHead className="w-24 text-center">1º Bim</TableHead>
-              <TableHead className="w-24 text-center">2º Bim</TableHead>
-              <TableHead className="w-24 text-center">3º Bim</TableHead>
-              <TableHead className="w-24 text-center">4º Bim</TableHead>
-              <TableHead className="w-24 text-center bg-primary/5 font-bold">Média</TableHead>
+              <TableHead className="font-semibold text-secondary">Aluno</TableHead>
+              <TableHead className="w-24 text-center font-semibold">1º Bim</TableHead>
+              <TableHead className="w-24 text-center font-semibold">2º Bim</TableHead>
+              <TableHead className="w-24 text-center font-semibold">3º Bim</TableHead>
+              <TableHead className="w-24 text-center font-semibold">4º Bim</TableHead>
+              <TableHead className="w-24 text-center bg-secondary/5 font-bold text-secondary">
+                Média
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {students.map((s) => {
               const avg = getAvg(s.id)
               const avgNum = Number(avg)
-              const statusClass = avg === '-' ? '' : avgNum >= 7 ? 'text-green-600' : 'text-red-600'
+              const statusClass = avg === '-' ? '' : avgNum >= 7 ? 'text-secondary' : 'text-primary'
               return (
-                <TableRow key={s.id} className="hover:bg-muted/10">
+                <TableRow key={s.id} className="hover:bg-secondary/5 transition-colors">
                   <TableCell className="font-medium text-secondary">{s.name}</TableCell>
                   {['b1', 'b2', 'b3', 'b4'].map((b) => (
                     <TableCell key={b} className="text-center">
                       <Input
                         value={grades[s.id]?.[b] || ''}
                         onChange={(e) => updateGrade(s.id, b, e.target.value)}
-                        className="w-16 h-8 text-center mx-auto"
+                        className="w-16 h-8 text-center mx-auto border-secondary/20 focus-visible:ring-secondary"
                         placeholder="-"
                       />
                     </TableCell>
                   ))}
                   <TableCell
-                    className={`text-center font-bold text-base bg-primary/5 ${statusClass}`}
+                    className={`text-center font-bold text-base bg-secondary/5 ${statusClass}`}
                   >
                     {avg}
                   </TableCell>
@@ -102,7 +125,7 @@ export function GradesTab({ selectedClass }: { selectedClass: string }) {
           </TableBody>
         </Table>
         <div className="p-4 bg-muted/10 border-t flex justify-end">
-          <Button onClick={handleSave} className="bg-primary shadow-md">
+          <Button onClick={handleSave} className="bg-secondary hover:bg-secondary/90 shadow-md">
             <Calculator className="w-4 h-4 mr-2" /> Calcular e Salvar Notas
           </Button>
         </div>

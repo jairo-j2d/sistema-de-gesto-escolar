@@ -34,7 +34,7 @@ export function SidebarComponent() {
 
   return (
     <Sidebar className="border-r shadow-sm">
-      <SidebarHeader className="h-16 flex items-center px-4 border-b border-white/10 bg-secondary text-white">
+      <SidebarHeader className="h-16 flex items-center px-4 border-b border-white/10 bg-secondary bg-pattern-hex-white text-white">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center font-bold text-white shadow-sm shrink-0">
             GB
@@ -45,10 +45,10 @@ export function SidebarComponent() {
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent className="bg-secondary text-sidebar-foreground">
+      <SidebarContent className="bg-secondary bg-pattern-hex-white text-sidebar-foreground">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="mt-4 gap-2 px-2">
+            <SidebarMenu className="mt-4 gap-2 px-2 relative z-10">
               {navItems.map((item) => {
                 const isActive =
                   location.pathname === item.url ||
@@ -68,8 +68,8 @@ export function SidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-white/10 bg-secondary p-4">
-        <SidebarMenu>
+      <SidebarFooter className="border-t border-white/10 bg-secondary bg-pattern-hex-white p-4">
+        <SidebarMenu className="relative z-10">
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={logout}

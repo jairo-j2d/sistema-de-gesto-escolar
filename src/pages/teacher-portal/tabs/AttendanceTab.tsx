@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MOCK_STUDENTS } from '@/data/mock'
 import { toast } from 'sonner'
-import { Check, X, Users } from 'lucide-react'
+import { Check, X, Users, Download } from 'lucide-react'
 
 export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
   const [grade, classGroup] = selectedClass.split(' - ')
@@ -31,11 +31,25 @@ export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
     setAttendance(newAtt)
   }
 
+  const handleExportPDF = () => {
+    toast.success('Relatório de Frequência exportado com sucesso!', {
+      description: 'O download do PDF foi iniciado.',
+    })
+    const blob = new Blob(['Mock PDF Content'], { type: 'application/pdf' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `frequencia-${selectedClass.replace(' ', '')}.pdf`
+    a.click()
+    window.URL.revokeObjectURL(url)
+  }
+
   return (
-    <Card className="border-t-4 border-t-primary shadow-sm">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b bg-muted/10">
+    <Card className="border-t-4 border-t-primary shadow-sm overflow-hidden">
+      <div className="absolute inset-0 bg-pattern-tri opacity-5 pointer-events-none"></div>
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b bg-muted/10 relative z-10">
         <div>
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-lg text-secondary">
             <Users className="w-5 h-5 text-primary" /> Frequência Diária
           </CardTitle>
           <p className="text-sm text-muted-foreground mt-1">
@@ -45,17 +59,36 @@ export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Input
             type="date"
-            className="w-full sm:w-40 bg-white"
+            className="w-full sm:w-40 bg-white border-secondary/20"
             defaultValue={new Date().toISOString().split('T')[0]}
           />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleExportPDF}
+            title="Exportar PDF"
+            className="border-secondary/20 text-secondary hover:bg-secondary/10"
+          >
+            <Download className="w-4 h-4" />
+          </Button>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="p-4 flex gap-2 border-b bg-white">
-          <Button variant="outline" size="sm" onClick={() => markAll(true)}>
+      <CardContent className="p-0 relative z-10 bg-white">
+        <div className="p-4 flex gap-2 border-b">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => markAll(true)}
+            className="border-secondary/20"
+          >
             Todos Presentes
           </Button>
-          <Button variant="outline" size="sm" onClick={() => markAll(false)}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => markAll(false)}
+            className="border-secondary/20"
+          >
             Todos Ausentes
           </Button>
         </div>
@@ -69,7 +102,7 @@ export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
           </TableHeader>
           <TableBody>
             {students.map((s, idx) => (
-              <TableRow key={s.id} className="hover:bg-muted/20">
+              <TableRow key={s.id} className="hover:bg-primary/5 transition-colors">
                 <TableCell className="text-center font-medium text-muted-foreground">
                   {idx + 1}
                 </TableCell>
@@ -81,7 +114,7 @@ export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
                       variant={attendance[s.id] !== false ? 'default' : 'outline'}
                       className={
                         attendance[s.id] !== false
-                          ? 'bg-green-600 hover:bg-green-700 text-white'
+                          ? 'bg-secondary hover:bg-secondary/90 text-white'
                           : 'text-muted-foreground'
                       }
                       onClick={() => setAttendance((p) => ({ ...p, [s.id]: true }))}
@@ -91,7 +124,9 @@ export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
                     <Button
                       size="sm"
                       variant={attendance[s.id] === false ? 'destructive' : 'outline'}
-                      className={attendance[s.id] === false ? '' : 'text-muted-foreground'}
+                      className={
+                        attendance[s.id] === false ? 'bg-primary' : 'text-muted-foreground'
+                      }
                       onClick={() => setAttendance((p) => ({ ...p, [s.id]: false }))}
                     >
                       <X className="w-4 h-4 mr-1" /> Ausente
@@ -112,7 +147,7 @@ export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
         <div className="p-6 bg-muted/10 flex justify-end border-t">
           <Button
             onClick={handleSave}
-            className="bg-primary text-white shadow-md font-semibold px-8"
+            className="bg-primary hover:bg-primary/90 text-white shadow-md font-semibold px-8"
           >
             Confirmar e Salvar Chamada
           </Button>

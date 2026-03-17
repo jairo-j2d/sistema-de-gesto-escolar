@@ -25,7 +25,7 @@ export default function Layout() {
         <SidebarComponent />
         <div className="flex-1 flex flex-col w-full h-screen overflow-hidden">
           <HeaderComponent />
-          <main className="flex-1 overflow-auto bg-slate-50/50 p-4 md:p-6 lg:p-8">
+          <main className="flex-1 overflow-auto bg-slate-50/50 bg-pattern-tri p-4 md:p-6 lg:p-8">
             <div className="mx-auto max-w-7xl">
               <Outlet />
             </div>
