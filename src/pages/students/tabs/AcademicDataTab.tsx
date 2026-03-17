@@ -9,7 +9,35 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+const GRADES = [
+  '1º Ano',
+  '2º Ano',
+  '3º Ano',
+  '4º Ano',
+  '5º Ano',
+  '6º Ano',
+  '7º Ano',
+  '8º Ano',
+  '9º Ano',
+  'EJA',
+]
+const EJA_MODULES = [
+  '1º Módulo',
+  '2º Módulo',
+  '3º Módulo',
+  '4º Módulo',
+  '5º Módulo',
+  '6º Módulo',
+  '7º Módulo',
+  '8º Módulo',
+]
+const CLASSES = ['A', 'B', 'C', 'D', 'E', 'F']
+const STATUSES = ['Ativo', 'Inativo', 'Transferido', 'Desistente']
+
 export function AcademicDataTab({ data, onChange }: any) {
+  const showModule = data.grade === 'EJA'
+  const showOccurrenceDate = data.status === 'Transferido' || data.status === 'Desistente'
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6 animate-fade-in">
       <div className="space-y-2">
@@ -39,25 +67,58 @@ export function AcademicDataTab({ data, onChange }: any) {
 
       <div className="space-y-2">
         <Label>Série/Ano</Label>
-        <Select value={data.grade || ''} onValueChange={(v) => onChange('grade', v)}>
+        <Select
+          value={data.grade || ''}
+          onValueChange={(v) => {
+            onChange('grade', v)
+            if (v !== 'EJA') onChange('module', '')
+          }}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="6º Ano">6º Ano</SelectItem>
-            <SelectItem value="7º Ano">7º Ano</SelectItem>
-            <SelectItem value="8º Ano">8º Ano</SelectItem>
-            <SelectItem value="9º Ano">9º Ano</SelectItem>
+            {GRADES.map((g) => (
+              <SelectItem key={g} value={g}>
+                {g}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
 
+      {showModule && (
+        <div className="space-y-2 animate-fade-in">
+          <Label className="text-primary font-semibold">Módulo (EJA)</Label>
+          <Select value={data.module || ''} onValueChange={(v) => onChange('module', v)}>
+            <SelectTrigger className="border-primary/50">
+              <SelectValue placeholder="Selecione..." />
+            </SelectTrigger>
+            <SelectContent>
+              {EJA_MODULES.map((m) => (
+                <SelectItem key={m} value={m}>
+                  {m}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label>Turma</Label>
-        <Input
-          value={data.classGroup || ''}
-          onChange={(e) => onChange('classGroup', e.target.value)}
-        />
+        <Select value={data.classGroup || ''} onValueChange={(v) => onChange('classGroup', v)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione..." />
+          </SelectTrigger>
+          <SelectContent>
+            {CLASSES.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
@@ -75,18 +136,38 @@ export function AcademicDataTab({ data, onChange }: any) {
       </div>
 
       <div className="space-y-2">
-        <Label>Situação Atual</Label>
-        <Select value={data.status || ''} onValueChange={(v) => onChange('status', v)}>
+        <Label>Situação Cadastral</Label>
+        <Select
+          value={data.status || ''}
+          onValueChange={(v) => {
+            onChange('status', v)
+            if (v !== 'Transferido' && v !== 'Desistente') onChange('occurrenceDate', '')
+          }}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Selecione..." />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Ativo">Ativo</SelectItem>
-            <SelectItem value="Inativo">Inativo</SelectItem>
-            <SelectItem value="Transferido">Transferido</SelectItem>
+            {STATUSES.map((s) => (
+              <SelectItem key={s} value={s}>
+                {s}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
+
+      {showOccurrenceDate && (
+        <div className="space-y-2 animate-fade-in">
+          <Label className="text-destructive font-semibold">Data do Ocorrido</Label>
+          <Input
+            type="date"
+            className="border-destructive/50"
+            value={data.occurrenceDate || ''}
+            onChange={(e) => onChange('occurrenceDate', e.target.value)}
+          />
+        </div>
+      )}
 
       <div className="col-span-full mt-4 flex gap-8 p-4 bg-muted/30 rounded-lg border">
         <div className="flex items-center space-x-3">
