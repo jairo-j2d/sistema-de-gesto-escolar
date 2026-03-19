@@ -10,6 +10,8 @@ import StudentForm from './pages/students/StudentForm'
 import ProfessionalList from './pages/professionals/ProfessionalList'
 import ProfessionalForm from './pages/professionals/ProfessionalForm'
 import TeacherPortal from './pages/teacher-portal/TeacherPortal'
+import QueriesPage from './pages/queries/QueriesPage'
+import ReportsPage from './pages/reports/ReportsPage'
 import ComingSoon from './pages/ComingSoon'
 import NotFound from './pages/NotFound'
 import { AppProvider } from './context/AppProvider'
@@ -31,8 +33,8 @@ const App = () => (
             <Route path="/profissionais/novo" element={<ProfessionalForm />} />
             <Route path="/profissionais/:id" element={<ProfessionalForm />} />
             <Route path="/portal-professor" element={<TeacherPortal />} />
-            <Route path="/consultas" element={<ComingSoon title="Consultas e Filtros" />} />
-            <Route path="/relatorios" element={<ComingSoon title="Módulo de Relatórios" />} />
+            <Route path="/consultas" element={<QueriesPage />} />
+            <Route path="/relatorios" element={<ReportsPage />} />
             <Route
               path="/configuracoes"
               element={<ComingSoon title="Configurações do Sistema" />}

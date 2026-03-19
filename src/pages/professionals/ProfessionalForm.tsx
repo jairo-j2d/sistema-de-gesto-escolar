@@ -12,17 +12,18 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Save, ArrowLeft, Briefcase } from 'lucide-react'
+import { Save, ArrowLeft, Briefcase, Printer } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase/client'
 import { MultiSelect } from '@/components/MultiSelect'
+import { PrintHeader } from '@/components/PrintHeader'
 import { MOCK_STUDENTS } from '@/data/mock'
 
 const DISCIPLINES = [
   'Português',
   'Matemática',
   'História',
-  'Geográfica',
+  'Geografia',
   'Ciências',
   'Física',
   'Química',
@@ -32,7 +33,7 @@ const DISCIPLINES = [
   'Redação',
   'Ensino Religioso',
   'Educação Física',
-  'Educação Socio Emocional',
+  'Educação Socioemocional',
   'Libras',
 ]
 
@@ -51,14 +52,14 @@ export default function ProfessionalForm() {
         .single()
         .then(({ data: d, error }) => {
           if (d) setData(d)
-          if (error) toast.error('Erro ao carregar os dados do profissional.')
+          if (error) toast.error('Erro ao carregar os dados.')
         })
     }
   }, [id])
 
   const toggleArr = (arr: string[] = [], item: string) =>
     arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item]
-  const handleChange = (field: string, val: any) => setData((p: any) => ({ ...p, [field]: val }))
+  const handleChange = (f: string, v: any) => setData((p: any) => ({ ...p, [f]: v }))
 
   const handleSave = async () => {
     setLoading(true)
@@ -73,20 +74,19 @@ export default function ProfessionalForm() {
       toast.success('Profissional salvo com sucesso!')
       navigate('/profissionais')
     } catch (e) {
-      toast.error('Ocorreu um erro ao salvar o profissional.')
+      toast.error('Ocorreu um erro ao salvar.')
     } finally {
       setLoading(false)
     }
   }
 
   const textFields = [
-    { l: 'Nome Completo', f: 'name', md: true },
+    { l: 'Nome', f: 'name', md: true },
     { l: 'CPF', f: 'cpf' },
     { l: 'Matrícula', f: 'registration_number' },
     { l: 'E-mail', f: 'email', t: 'email' },
     { l: 'Telefone', f: 'phone' },
   ]
-
   const selectFields = [
     { l: 'Vínculo', f: 'employment_type', opts: ['Efetivo', 'Contratado'] },
     { l: 'Carga Horária', f: 'workload', opts: ['100 h/a', '150 h/a', '200 h/a'] },
@@ -96,27 +96,26 @@ export default function ProfessionalForm() {
       opts: [
         'Ensino Médio Completo',
         'Ensino Médio Incompleto',
-        'Ensino Fundamental completo',
+        'Ensino Fundamental Completo',
         'Ensino Fundamental Incompleto',
         'Analfabeto Funcional',
       ],
     },
     { l: 'Função', f: 'role', opts: ['Professor(a)', 'Coordenador(a)', 'Apoio Pedagógico'] },
     {
-      l: 'Transporte Utilizado',
+      l: 'Transporte',
       f: 'transport_used',
       opts: ['Ônibus', 'Micro-Ônibus', 'Toyota', 'Van', 'Outros'],
     },
   ]
 
   return (
-    <div className="max-w-4xl mx-auto pb-24 animate-fade-in relative">
-      <div className="flex items-center gap-4 mb-6">
+    <div className="max-w-4xl mx-auto pb-24 animate-fade-in relative print:p-0 print:m-0 print:max-w-none">
+      <div className="flex items-center gap-4 mb-6 print:hidden">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => navigate('/profissionais')}
-          className="shrink-0"
           disabled={loading}
         >
           <ArrowLeft className="w-5 h-5" />
@@ -124,21 +123,28 @@ export default function ProfessionalForm() {
         <h1 className="text-3xl font-bold tracking-tight text-secondary">
           {id ? 'Editar Profissional' : 'Novo Profissional'}
         </h1>
+        {id && (
+          <Button
+            onClick={() => window.print()}
+            className="ml-auto bg-secondary/10 text-secondary hover:bg-secondary/20"
+          >
+            <Printer className="w-4 h-4 mr-2" /> Exportar Ficha
+          </Button>
+        )}
       </div>
 
-      <Card className="border-t-4 border-t-primary shadow-md relative overflow-hidden bg-background/95 backdrop-blur-sm">
-        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-bl-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rotate-45 -translate-x-1/2 translate-y-1/2 pointer-events-none" />
+      <Card className="border-t-4 border-t-primary shadow-md relative overflow-hidden bg-background/95 backdrop-blur-sm print:border-none print:shadow-none print:bg-transparent print:rounded-none">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 rounded-bl-[100px] pointer-events-none print:hidden" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/5 rotate-45 -translate-x-1/2 translate-y-1/2 pointer-events-none print:hidden" />
 
-        <CardHeader className="bg-primary/5 pb-4 border-b border-primary/10 relative z-10">
-          <CardTitle className="text-primary text-sm font-bold flex items-center gap-2 uppercase tracking-wider">
-            <Briefcase className="w-5 h-5" /> Ficha de Servidor
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="p-6 relative z-10 print:p-0">
+          <PrintHeader />
+          <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6">
             {textFields.map((i) => (
-              <div key={i.f} className={`space-y-2 ${i.md ? 'md:col-span-2' : ''}`}>
+              <div
+                key={i.f}
+                className={`space-y-2 ${i.md ? 'md:col-span-2 print:col-span-2' : ''}`}
+              >
                 <Label>{i.l}</Label>
                 <Input
                   type={i.t || 'text'}
@@ -147,7 +153,7 @@ export default function ProfessionalForm() {
                 />
               </div>
             ))}
-            <div className="space-y-2 md:col-span-2">
+            <div className="space-y-2 md:col-span-2 print:col-span-2">
               <Label>Disciplinas</Label>
               <MultiSelect
                 options={DISCIPLINES}
@@ -177,14 +183,16 @@ export default function ProfessionalForm() {
 
           {(data.role === 'Professor(a)' || data.role === 'Coordenador(a)') && (
             <div className="space-y-6 mt-8 pt-6 border-t border-dashed border-border/60">
-              <h3 className="font-semibold text-lg text-secondary">Alocação de Turmas</h3>
+              <h3 className="font-semibold text-lg text-secondary print:text-black">
+                Alocação de Turmas
+              </h3>
               <div className="space-y-3">
                 <Label>Séries Vinculadas</Label>
                 <div className="flex flex-wrap gap-4">
                   {['6º Ano', '7º Ano', '8º Ano', '9º Ano'].map((g) => (
                     <label
                       key={g}
-                      className="flex items-center gap-2 cursor-pointer bg-muted/40 px-3 py-1.5 rounded-md hover:bg-muted transition-colors"
+                      className="flex items-center gap-2 cursor-pointer bg-muted/40 print:bg-transparent px-3 py-1.5 rounded-md"
                     >
                       <Checkbox
                         checked={data.grades?.includes(g)}
@@ -201,7 +209,7 @@ export default function ProfessionalForm() {
                   {['A', 'B', 'C', 'D', 'E'].map((c) => (
                     <label
                       key={c}
-                      className="flex items-center gap-2 cursor-pointer bg-muted/40 px-3 py-1.5 rounded-md hover:bg-muted transition-colors"
+                      className="flex items-center gap-2 cursor-pointer bg-muted/40 print:bg-transparent px-3 py-1.5 rounded-md"
                     >
                       <Checkbox
                         checked={data.classes?.includes(c)}
@@ -217,12 +225,14 @@ export default function ProfessionalForm() {
 
           {data.role === 'Apoio Pedagógico' && (
             <div className="space-y-6 mt-8 pt-6 border-t border-dashed border-border/60">
-              <h3 className="font-semibold text-lg text-secondary">Vínculo de Alunos (AEE)</h3>
+              <h3 className="font-semibold text-lg text-secondary print:text-black">
+                Vínculo de Alunos (AEE)
+              </h3>
               <div className="grid gap-2">
                 {MOCK_STUDENTS.filter((s) => s.aee).map((s) => (
                   <label
                     key={s.id}
-                    className="flex items-center gap-2 bg-muted/30 p-2 rounded border cursor-pointer hover:bg-muted/50 transition-colors"
+                    className="flex items-center gap-2 bg-muted/30 print:bg-transparent p-2 rounded border print:border-none cursor-pointer"
                   >
                     <Checkbox
                       checked={data.students?.includes(s.id)}
@@ -241,7 +251,7 @@ export default function ProfessionalForm() {
         </CardContent>
       </Card>
 
-      <div className="fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width)] bg-background/80 backdrop-blur-md border-t p-4 flex items-center justify-end shadow-lg z-40">
+      <div className="fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width)] bg-background/80 backdrop-blur-md border-t p-4 flex items-center justify-end shadow-lg z-40 print:hidden">
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => navigate('/profissionais')} disabled={loading}>
             Cancelar
