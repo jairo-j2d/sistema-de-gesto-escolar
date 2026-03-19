@@ -53,7 +53,7 @@ export function PersonalDataTab({ data, onChange }: any) {
     <div className="p-6 animate-fade-in space-y-8">
       {/* Photo Section */}
       <div className="flex flex-col md:flex-row gap-8 items-start">
-        <div className="flex-shrink-0 flex flex-col items-center">
+        <div className="flex-shrink-0 flex flex-col items-center print:hidden">
           <Label className="block mb-2 font-medium">Foto 3x4</Label>
           <div className="relative w-32 h-40 border-2 border-dashed border-muted-foreground/30 rounded-lg flex flex-col items-center justify-center bg-slate-50 overflow-hidden group hover:border-primary transition-colors cursor-pointer">
             {data.photo ? (
@@ -75,11 +75,22 @@ export function PersonalDataTab({ data, onChange }: any) {
 
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
           <div className="space-y-2 lg:col-span-2">
-            <Label>Nome Completo do Aluno</Label>
+            <Label>
+              Nome Completo do Aluno <span className="text-destructive">*</span>
+            </Label>
             <Input
               value={data.name || ''}
               onChange={(e) => onChange('name', e.target.value)}
               placeholder="Ex: Maria da Silva"
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Data de Nascimento</Label>
+            <Input
+              type="date"
+              value={data.birthDate || ''}
+              onChange={(e) => onChange('birthDate', e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -91,11 +102,20 @@ export function PersonalDataTab({ data, onChange }: any) {
             />
           </div>
           <div className="space-y-2">
-            <Label>Data de Nascimento</Label>
+            <Label>RG</Label>
             <Input
-              type="date"
-              value={data.birthDate || ''}
-              onChange={(e) => onChange('birthDate', e.target.value)}
+              value={data.rg || ''}
+              onChange={(e) => onChange('rg', e.target.value)}
+              placeholder="0.000.000"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>E-mail</Label>
+            <Input
+              type="email"
+              value={data.email || ''}
+              onChange={(e) => onChange('email', e.target.value)}
+              placeholder="aluno@email.com"
             />
           </div>
           <div className="space-y-2">
@@ -148,7 +168,7 @@ export function PersonalDataTab({ data, onChange }: any) {
             />
           </div>
           <div className="space-y-2">
-            <Label>Telefone</Label>
+            <Label>Telefone / WhatsApp</Label>
             <Input
               value={data.phone || ''}
               onChange={(e) => onChange('phone', e.target.value)}

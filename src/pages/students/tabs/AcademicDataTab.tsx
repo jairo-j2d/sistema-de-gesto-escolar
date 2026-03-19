@@ -41,8 +41,12 @@ export function AcademicDataTab({ data, onChange }: any) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 p-6 animate-fade-in">
       <div className="space-y-2">
-        <Label>ID Matrícula</Label>
-        <Input value={data.id || ''} disabled className="bg-muted" />
+        <Label>Nº Matrícula</Label>
+        <Input
+          value={data.enrollment_number || ''}
+          onChange={(e) => onChange('enrollment_number', e.target.value)}
+          placeholder="Ex: MAT12345"
+        />
       </div>
       <div className="space-y-2">
         <Label>Código INEP</Label>

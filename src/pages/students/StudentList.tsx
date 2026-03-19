@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import {
   Table,
@@ -11,19 +12,46 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Plus, Search, Edit2, Trash2, Eye } from 'lucide-react'
-import { MOCK_STUDENTS } from '@/data/mock'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
+import { supabase } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function StudentList() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
+  const [students, setStudents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const filtered = MOCK_STUDENTS.filter(
+  const fetchStudents = async () => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) toast.error('Erro ao carregar alunos.')
+    else setStudents(data || [])
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchStudents()
+  }, [])
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Tem certeza que deseja excluir este aluno?')) return
+    const { error } = await supabase.from('students').delete().eq('id', id)
+    if (error) toast.error('Erro ao excluir aluno.')
+    else {
+      toast.success('Aluno excluído com sucesso.')
+      fetchStudents()
+    }
+  }
+
+  const filtered = students.filter(
     (s) =>
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      s.cpf.includes(search) ||
-      s.id.includes(search),
+      (s.name && s.name.toLowerCase().includes(search.toLowerCase())) ||
+      (s.cpf && s.cpf.includes(search)) ||
+      (s.enrollment_number && s.enrollment_number.toLowerCase().includes(search.toLowerCase())),
   )
 
   return (
@@ -48,7 +76,7 @@ export default function StudentList() {
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por nome, CPF ou ID..."
+              placeholder="Buscar por nome, CPF ou Matrícula..."
               className="pl-9 bg-white"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -60,7 +88,7 @@ export default function StudentList() {
             <Table>
               <TableHeader className="bg-muted/50">
                 <TableRow>
-                  <TableHead className="w-24">ID</TableHead>
+                  <TableHead className="w-32">Matrícula</TableHead>
                   <TableHead>Nome do Aluno</TableHead>
                   <TableHead>Série/Ano</TableHead>
                   <TableHead>Turma</TableHead>
@@ -69,63 +97,77 @@ export default function StudentList() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((s) => (
-                  <TableRow key={s.id} className="hover:bg-muted/30 transition-colors">
-                    <TableCell className="font-medium text-muted-foreground">#{s.id}</TableCell>
-                    <TableCell className="font-bold text-secondary">{s.name}</TableCell>
-                    <TableCell>{s.grade}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="font-bold text-secondary border-secondary/20"
-                      >
-                        {s.classGroup}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={
-                          s.status === 'Ativo'
-                            ? 'bg-green-600 hover:bg-green-700'
-                            : 'bg-red-600 hover:bg-red-700'
-                        }
-                      >
-                        {s.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-blue-600 hover:bg-blue-50 hover:text-blue-700"
-                        onClick={() => navigate(`/alunos/${s.id}`)}
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-amber-600 hover:bg-amber-50 hover:text-amber-700"
-                        onClick={() => navigate(`/alunos/${s.id}`)}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                      Carregando...
                     </TableCell>
                   </TableRow>
-                ))}
-                {filtered.length === 0 && (
+                ) : filtered.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
                       Nenhum aluno encontrado.
                     </TableCell>
                   </TableRow>
+                ) : (
+                  filtered.map((s) => (
+                    <TableRow key={s.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-mono text-muted-foreground text-xs">
+                        {s.enrollment_number || '-'}
+                      </TableCell>
+                      <TableCell className="font-bold text-secondary">{s.name}</TableCell>
+                      <TableCell>{s.grade}</TableCell>
+                      <TableCell>
+                        {s.class ? (
+                          <Badge
+                            variant="outline"
+                            className="font-bold text-secondary border-secondary/20"
+                          >
+                            {s.class}
+                          </Badge>
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            s.status === 'Ativo'
+                              ? 'bg-green-600 hover:bg-green-700'
+                              : 'bg-red-600 hover:bg-red-700'
+                          }
+                        >
+                          {s.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                          onClick={() => navigate(`/alunos/${s.id}`)}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-amber-600 hover:bg-amber-50 hover:text-amber-700"
+                          onClick={() => navigate(`/alunos/${s.id}`)}
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                          onClick={() => handleDelete(s.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
                 )}
               </TableBody>
             </Table>
