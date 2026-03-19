@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -10,14 +10,23 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { MOCK_STUDENTS } from '@/data/mock'
 import { toast } from 'sonner'
 import { Check, X, Users, Download } from 'lucide-react'
+import { supabase } from '@/lib/supabase/client'
 
 export function AttendanceTab({ selectedClass }: { selectedClass: string }) {
   const [grade, classGroup] = selectedClass.split(' - ')
-  const students = MOCK_STUDENTS.filter((s) => s.grade === grade && s.classGroup === classGroup)
+  const [students, setStudents] = useState<any[]>([])
   const [attendance, setAttendance] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    supabase
+      .from('students')
+      .select('*')
+      .eq('grade', grade)
+      .eq('class', classGroup)
+      .then(({ data }) => setStudents(data || []))
+  }, [grade, classGroup])
 
   const handleSave = () => {
     toast.success('Chamada registrada e salva no sistema!', {

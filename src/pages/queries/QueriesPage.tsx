@@ -22,7 +22,7 @@ import { MultiSelect } from '@/components/MultiSelect'
 import { PrintHeader } from '@/components/PrintHeader'
 import { PrintFooter } from '@/components/PrintFooter'
 import { supabase } from '@/lib/supabase/client'
-import { Search, Printer, Users, UserSquare2 } from 'lucide-react'
+import { Search, Printer, Users, UserSquare2, Download } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 
@@ -126,20 +126,54 @@ export default function QueriesPage() {
     return matchName && matchEnrollment && matchGrade && matchClass && matchStatus
   })
 
+  const exportCSV = () => {
+    const header = sColumns.join(';')
+    const rows = filteredStudents.map((s) => {
+      return STUDENT_COLUMNS.filter((c) => sColumns.includes(c.label))
+        .map((col) => {
+          let val = s[col.value] || '-'
+          if (col.value === 'birth_date' && s.birth_date) {
+            val = new Date(s.birth_date).toLocaleDateString('pt-BR')
+          }
+          return `"${val}"`
+        })
+        .join(';')
+    })
+    const csv = [header, ...rows].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `consulta_alunos_${Date.now()}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="space-y-6 print:space-y-0 print:m-0 animate-fade-in pb-12 print:pb-0 flex flex-col min-h-full">
       <PrintHeader />
 
-      <div className="flex justify-between items-center print:hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-secondary">Consultas Dinâmicas</h1>
           <p className="text-muted-foreground mt-1">
-            Filtre a base de dados e gere relatórios em PDF com assinaturas.
+            Filtre a base de dados e gere relatórios em PDF ou Excel.
           </p>
         </div>
-        <Button onClick={() => window.print()} className="bg-primary text-white shadow-md">
-          <Printer className="w-4 h-4 mr-2" /> Exportar PDF
-        </Button>
+        <div className="flex items-center gap-2">
+          {activeTab === 'alunos' && (
+            <Button
+              variant="outline"
+              onClick={exportCSV}
+              className="bg-white shadow-sm border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              <Download className="w-4 h-4 mr-2" /> Exportar CSV
+            </Button>
+          )}
+          <Button onClick={() => window.print()} className="bg-primary text-white shadow-md">
+            <Printer className="w-4 h-4 mr-2" /> Exportar PDF
+          </Button>
+        </div>
       </div>
 
       <div className="flex-1">
@@ -220,13 +254,13 @@ export default function QueriesPage() {
                 </div>
                 <div className="pt-2 border-t border-primary/10">
                   <Label className="text-xs font-semibold text-muted-foreground mb-2 block uppercase tracking-wider">
-                    Colunas do Relatório (PDF)
+                    Colunas do Relatório (PDF / CSV)
                   </Label>
                   <MultiSelect
                     options={STUDENT_COLUMNS.map((c) => c.label)}
                     selected={sColumns}
                     onChange={setSColumns}
-                    placeholder="Selecione as colunas a serem impressas..."
+                    placeholder="Selecione as colunas a serem exportadas..."
                   />
                 </div>
               </CardHeader>

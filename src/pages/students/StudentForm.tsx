@@ -13,12 +13,16 @@ import { AcademicHistoryTab } from './tabs/AcademicHistoryTab'
 import { PrintHeader } from '@/components/PrintHeader'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function StudentForm() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { profile } = useAuth()
   const [data, setData] = useState<any>({})
   const [loading, setLoading] = useState(false)
+
+  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(profile?.role || '')
 
   useEffect(() => {
     if (id) {
@@ -44,10 +48,13 @@ export default function StudentForm() {
     }
   }, [id])
 
-  const handleChange = (field: string, value: any) =>
+  const handleChange = (field: string, value: any) => {
+    if (!canEdit) return
     setData((p: any) => ({ ...p, [field]: value }))
+  }
 
   const handleSave = async () => {
+    if (!canEdit) return toast.error('Sem permissão para salvar alterações.')
     if (!data.name) {
       toast.error('O nome do aluno é obrigatório.')
       return
@@ -134,11 +141,12 @@ export default function StudentForm() {
           </Button>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-secondary">
-              {id ? 'Editar Cadastro' : 'Novo Cadastro'}
+              {id ? (canEdit ? 'Editar Cadastro' : 'Visualizar Cadastro') : 'Novo Cadastro'}
             </h1>
             {id && (
               <p className="text-muted-foreground mt-1">
-                Atualizando dados de <strong className="text-secondary">{data.name}</strong>
+                {canEdit ? 'Atualizando dados de' : 'Visualizando'}{' '}
+                <strong className="text-secondary">{data.name}</strong>
               </p>
             )}
           </div>
@@ -249,14 +257,16 @@ export default function StudentForm() {
             onClick={() => navigate('/alunos')}
             className="flex-1 sm:flex-none"
           >
-            Cancelar
+            Voltar
           </Button>
-          <Button
-            onClick={handleSave}
-            className="bg-primary hover:bg-primary/90 text-white shadow-md flex-1 sm:flex-none font-semibold text-base px-6"
-          >
-            <Save className="w-4 h-4 mr-2" /> Salvar Cadastro
-          </Button>
+          {canEdit && (
+            <Button
+              onClick={handleSave}
+              className="bg-primary hover:bg-primary/90 text-white shadow-md flex-1 sm:flex-none font-semibold text-base px-6"
+            >
+              <Save className="w-4 h-4 mr-2" /> Salvar Cadastro
+            </Button>
+          )}
         </div>
       </div>
     </div>

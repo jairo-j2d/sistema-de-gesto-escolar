@@ -1,23 +1,31 @@
+import { useState } from 'react'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { useContext, useState } from 'react'
-import { AppContext } from '@/context/AppProvider'
-import { useNavigate } from 'react-router-dom'
 import { ShieldCheck } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
+import { toast } from 'sonner'
 
 export default function Login() {
-  const { login } = useContext(AppContext)
+  const { signIn, user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('admin@escola.gov.br')
+  const [password, setPassword] = useState('admin123')
+  const [loading, setLoading] = useState(false)
 
-  const handleLogin = (e: React.FormEvent) => {
+  if (user && !authLoading) {
+    return <Navigate to="/" replace />
+  }
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const user = login(email)
-    if (user?.role === 'Professor(a)') {
-      navigate('/portal-professor')
+    setLoading(true)
+    const { error } = await signIn(email, password)
+    if (error) {
+      toast.error('Erro ao fazer login. Verifique suas credenciais.')
+      setLoading(false)
     } else {
       navigate('/')
     }
@@ -40,7 +48,7 @@ export default function Login() {
               <Input
                 id="email"
                 type="email"
-                placeholder="Ex: admin@escola.gov.br ou carlos@escola.gov.br"
+                placeholder="Ex: admin@escola.gov.br"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -63,13 +71,17 @@ export default function Login() {
             </div>
             <Button
               type="submit"
+              disabled={loading}
               className="w-full bg-primary hover:bg-primary/90 text-white mt-8 h-12 text-lg font-semibold shadow-md"
             >
-              Acessar Sistema
+              {loading ? 'Acessando...' : 'Acessar Sistema'}
             </Button>
           </form>
-          <div className="mt-8 text-center text-xs text-muted-foreground">
-            <p>Acesso restrito a funcionários autorizados da prefeitura municipal.</p>
+          <div className="mt-8 text-center space-y-2 text-xs text-muted-foreground bg-muted/20 p-3 rounded">
+            <p className="font-semibold">Credenciais de Teste:</p>
+            <p>Admin: admin@escola.gov.br / admin123</p>
+            <p>Coord: coord@escola.gov.br / coord123</p>
+            <p>Prof: prof@escola.gov.br / prof123</p>
           </div>
         </CardContent>
       </Card>

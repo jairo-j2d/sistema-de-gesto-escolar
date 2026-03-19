@@ -9,28 +9,49 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { Home, Users, Search, FileText, Settings, LogOut, Briefcase, BookOpen } from 'lucide-react'
+import {
+  Home,
+  Users,
+  Search,
+  FileText,
+  Settings,
+  LogOut,
+  Briefcase,
+  BookOpen,
+  MessageSquare,
+} from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
-import { useContext } from 'react'
-import { AppContext } from '@/context/AppProvider'
+import { useAuth } from '@/hooks/use-auth'
 
 export function SidebarComponent() {
   const location = useLocation()
-  const { logout, user } = useContext(AppContext)
+  const { signOut, profile } = useAuth()
+  const role = profile?.role || ''
 
-  const adminItems = [
-    { title: 'Dashboard', icon: Home, url: '/' },
-    { title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' },
-    { title: 'Alunos', icon: Users, url: '/alunos' },
-    { title: 'Profissionais', icon: Briefcase, url: '/profissionais' },
-    { title: 'Consultas', icon: Search, url: '/consultas' },
-    { title: 'Relatórios', icon: FileText, url: '/relatorios' },
-    { title: 'Configurações', icon: Settings, url: '/configuracoes' },
-  ]
+  const items = []
 
-  const teacherItems = [{ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' }]
-
-  const navItems = user?.role === 'Professor(a)' ? teacherItems : adminItems
+  if (role === 'Administrador' || role === 'Diretor(a)' || role === 'Secretário(a)') {
+    items.push({ title: 'Dashboard', icon: Home, url: '/' })
+    items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
+    items.push({ title: 'Alunos', icon: Users, url: '/alunos' })
+    items.push({ title: 'Profissionais', icon: Briefcase, url: '/profissionais' })
+    items.push({ title: 'Consultas', icon: Search, url: '/consultas' })
+    items.push({ title: 'Relatórios', icon: FileText, url: '/relatorios' })
+    items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
+    if (role === 'Administrador') {
+      items.push({ title: 'Configurações', icon: Settings, url: '/configuracoes' })
+    }
+  } else if (role === 'Coordenador(a)') {
+    items.push({ title: 'Dashboard', icon: Home, url: '/' })
+    items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
+    items.push({ title: 'Alunos', icon: Users, url: '/alunos' })
+    items.push({ title: 'Consultas', icon: Search, url: '/consultas' })
+    items.push({ title: 'Relatórios', icon: FileText, url: '/relatorios' })
+    items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
+  } else if (role === 'Professor(a)') {
+    items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
+    items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
+  }
 
   return (
     <Sidebar className="border-r shadow-sm">
@@ -49,7 +70,7 @@ export function SidebarComponent() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="mt-4 gap-2 px-2 relative z-10">
-              {navItems.map((item) => {
+              {items.map((item) => {
                 const isActive =
                   location.pathname === item.url ||
                   (location.pathname.startsWith(item.url) && item.url !== '/')
@@ -72,8 +93,8 @@ export function SidebarComponent() {
         <SidebarMenu className="relative z-10">
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={logout}
-              className="text-red-400 hover:text-red-300 hover:bg-white/5"
+              onClick={() => signOut()}
+              className="text-red-400 hover:text-red-300 hover:bg-white/5 cursor-pointer"
             >
               <LogOut className="w-5 h-5 mr-3" />
               <span className="font-medium">Sair do Sistema</span>

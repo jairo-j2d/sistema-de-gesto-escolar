@@ -3,20 +3,39 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { SidebarComponent } from './SidebarComponent'
 import { HeaderComponent } from './HeaderComponent'
 import { AIChatDrawer } from './chat/AIChatDrawer'
-import { useContext } from 'react'
-import { AppContext } from '@/context/AppProvider'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function Layout() {
-  const { isAuthenticated, user } = useContext(AppContext)
+  const { user, profile, loading } = useAuth()
   const location = useLocation()
 
-  if (!isAuthenticated) return <Navigate to="/login" replace />
+  if (loading) return <div className="flex h-screen items-center justify-center">Carregando...</div>
+  if (!user) return <Navigate to="/login" replace />
 
-  const isTeacher = user?.role === 'Professor(a)'
-  const isTeacherRoute = location.pathname.startsWith('/portal-professor')
+  const role = profile?.role || ''
 
-  if (isTeacher && !isTeacherRoute) {
+  // RBAC Routing Control
+  if (
+    role === 'Professor(a)' &&
+    !location.pathname.startsWith('/portal-professor') &&
+    !location.pathname.startsWith('/mensagens')
+  ) {
     return <Navigate to="/portal-professor" replace />
+  }
+
+  if (
+    role === 'Coordenador(a)' &&
+    (location.pathname.startsWith('/profissionais') ||
+      location.pathname.startsWith('/configuracoes'))
+  ) {
+    return <Navigate to="/" replace />
+  }
+
+  if (
+    (role === 'Diretor(a)' || role === 'Secretário(a)') &&
+    location.pathname.startsWith('/configuracoes')
+  ) {
+    return <Navigate to="/" replace />
   }
 
   return (

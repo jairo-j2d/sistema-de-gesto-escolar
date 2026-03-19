@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Table,
@@ -10,19 +10,24 @@ import {
 } from '@/components/ui/table'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { MOCK_STUDENTS } from '@/data/mock'
 import { toast } from 'sonner'
 import { GraduationCap, Calculator, Download } from 'lucide-react'
+import { supabase } from '@/lib/supabase/client'
 
 export function GradesTab({ selectedClass }: { selectedClass: string }) {
   const [grade, classGroup] = selectedClass.split(' - ')
-  const students = MOCK_STUDENTS.filter((s) => s.grade === grade && s.classGroup === classGroup)
+  const [students, setStudents] = useState<any[]>([])
 
-  const [grades, setGrades] = useState<Record<string, any>>({
-    '1659': { b1: '8.0', b2: '7.5', b3: '', b4: '' },
-    '1660': { b1: '6.0', b2: '6.5', b3: '7.0', b4: '' },
-    '1661': { b1: '9.0', b2: '8.5', b3: '9.5', b4: '' },
-  })
+  useEffect(() => {
+    supabase
+      .from('students')
+      .select('*')
+      .eq('grade', grade)
+      .eq('class', classGroup)
+      .then(({ data }) => setStudents(data || []))
+  }, [grade, classGroup])
+
+  const [grades, setGrades] = useState<Record<string, any>>({})
 
   const updateGrade = (id: string, period: string, val: string) => {
     setGrades((p) => ({

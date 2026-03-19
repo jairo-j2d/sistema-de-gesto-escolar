@@ -15,12 +15,17 @@ import { Plus, Search, Edit2, Trash2, Eye } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function StudentList() {
   const navigate = useNavigate()
+  const { profile } = useAuth()
   const [search, setSearch] = useState('')
   const [students, setStudents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+
+  const isAdmin = profile?.role === 'Administrador'
+  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(profile?.role || '')
 
   const fetchStudents = async () => {
     setLoading(true)
@@ -38,6 +43,7 @@ export default function StudentList() {
   }, [])
 
   const handleDelete = async (id: string) => {
+    if (!isAdmin) return toast.error('Você não tem permissão para excluir registros.')
     if (!confirm('Tem certeza que deseja excluir este aluno?')) return
     const { error } = await supabase.from('students').delete().eq('id', id)
     if (error) toast.error('Erro ao excluir aluno.')
@@ -63,12 +69,14 @@ export default function StudentList() {
             Consulte e gerencie as matrículas ativas da instituição.
           </p>
         </div>
-        <Button
-          onClick={() => navigate('/alunos/novo')}
-          className="bg-primary hover:bg-primary/90 text-white shadow-md"
-        >
-          <Plus className="w-4 h-4 mr-2" /> Novo Aluno
-        </Button>
+        {canEdit && (
+          <Button
+            onClick={() => navigate('/alunos/novo')}
+            className="bg-primary hover:bg-primary/90 text-white shadow-md"
+          >
+            <Plus className="w-4 h-4 mr-2" /> Novo Aluno
+          </Button>
+        )}
       </div>
 
       <Card className="shadow-sm">
@@ -144,27 +152,34 @@ export default function StudentList() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          title="Visualizar"
                           className="text-blue-600 hover:bg-blue-50 hover:text-blue-700"
                           onClick={() => navigate(`/alunos/${s.id}`)}
                         >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-amber-600 hover:bg-amber-50 hover:text-amber-700"
-                          onClick={() => navigate(`/alunos/${s.id}`)}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                          onClick={() => handleDelete(s.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        {canEdit && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            title="Editar"
+                            className="text-amber-600 hover:bg-amber-50 hover:text-amber-700"
+                            onClick={() => navigate(`/alunos/${s.id}`)}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                        {isAdmin && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            title="Excluir"
+                            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => handleDelete(s.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))

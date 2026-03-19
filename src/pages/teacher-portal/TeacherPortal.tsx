@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
@@ -13,15 +13,15 @@ import { GradesTab } from './tabs/GradesTab'
 import { PlanningTab } from './tabs/PlanningTab'
 import { MessagingHubTab } from './tabs/MessagingHubTab'
 import { BookOpen } from 'lucide-react'
-import { AppContext } from '@/context/AppProvider'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function TeacherPortal() {
-  const { user } = useContext(AppContext)
+  const { profile } = useAuth()
 
   const availableClasses: string[] = []
-  if (user?.role === 'Professor(a)') {
-    const grades = user.grades || []
-    const classes = user.classes || []
+  if (profile?.role === 'Professor(a)') {
+    const grades = profile.grades || []
+    const classes = profile.classes || []
     grades.forEach((g: string) => {
       classes.forEach((c: string) => {
         availableClasses.push(`${g} - ${c}`)
@@ -50,8 +50,8 @@ export default function TeacherPortal() {
             <BookOpen className="w-8 h-8 text-primary" /> Portal do Professor
           </h1>
           <p className="text-muted-foreground mt-1 text-lg">
-            Olá, <strong className="text-primary">{user?.name || 'Professor(a)'}</strong>! Selecione
-            a turma para gerenciar suas atividades pedagógicas.
+            Olá, <strong className="text-primary">{profile?.name || 'Professor(a)'}</strong>!
+            Selecione a turma para gerenciar suas atividades pedagógicas.
           </p>
         </div>
         <div className="flex-1 w-full md:w-auto md:min-w-[250px] relative z-10 bg-white/80 p-2 rounded-lg backdrop-blur-sm border shadow-sm">
@@ -104,7 +104,6 @@ export default function TeacherPortal() {
             className="flex-1 py-3 data-[state=active]:bg-secondary/10 data-[state=active]:text-secondary data-[state=active]:font-semibold relative"
           >
             Hub de Mensagens
-            <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full"></span>
           </TabsTrigger>
         </TabsList>
         <div className="mt-4">

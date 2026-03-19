@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Users, GraduationCap, Bus, Activity, FileText, Search, Sparkles } from 'lucide-react'
-import { MOCK_STUDENTS } from '@/data/mock'
 import { useNavigate } from 'react-router-dom'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '@/context/AppProvider'
+import { supabase } from '@/lib/supabase/client'
 
 function StatCard({ title, value, icon: Icon, color }: any) {
   return (
@@ -31,6 +31,16 @@ function StatCard({ title, value, icon: Icon, color }: any) {
 export default function Dashboard() {
   const navigate = useNavigate()
   const { setAIChatOpen } = useContext(AppContext)
+  const [students, setStudents] = useState<any[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('students')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(3)
+      .then(({ data }) => setStudents(data || []))
+  }, [])
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -87,7 +97,7 @@ export default function Dashboard() {
           <h2 className="text-xl font-semibold text-secondary mt-8 mb-4">Últimas Atualizações</h2>
           <Card className="overflow-hidden">
             <div className="divide-y">
-              {MOCK_STUDENTS.slice(0, 3).map((s) => (
+              {students.map((s) => (
                 <div
                   key={s.id}
                   className="p-4 flex items-center justify-between hover:bg-muted/50 transition-colors"
@@ -95,7 +105,7 @@ export default function Dashboard() {
                   <div>
                     <p className="font-semibold text-secondary">{s.name}</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Atualizado em {s.lastUpdate} • {s.grade}
+                      {s.grade} • {s.class ? `Turma ${s.class}` : ''}
                     </p>
                   </div>
                   <Button
@@ -108,6 +118,9 @@ export default function Dashboard() {
                   </Button>
                 </div>
               ))}
+              {students.length === 0 && (
+                <div className="p-8 text-center text-muted-foreground">Nenhum aluno recente.</div>
+              )}
             </div>
           </Card>
         </div>

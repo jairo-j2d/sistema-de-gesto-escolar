@@ -12,12 +12,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Save, ArrowLeft, Briefcase, Printer } from 'lucide-react'
+import { Save, ArrowLeft, Printer } from 'lucide-react'
 import { toast } from 'sonner'
 import { supabase } from '@/lib/supabase/client'
 import { MultiSelect } from '@/components/MultiSelect'
 import { PrintHeader } from '@/components/PrintHeader'
-import { MOCK_STUDENTS } from '@/data/mock'
+import { useAuth } from '@/hooks/use-auth'
 
 const DISCIPLINES = [
   'Português',
@@ -40,10 +40,19 @@ const DISCIPLINES = [
 export default function ProfessionalForm() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { profile } = useAuth()
   const [data, setData] = useState<any>({ disciplines: [], grades: [], classes: [], students: [] })
   const [loading, setLoading] = useState(false)
+  const [studentOptions, setStudentOptions] = useState<any[]>([])
+
+  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(profile?.role || '')
 
   useEffect(() => {
+    supabase
+      .from('students')
+      .select('id, name, grade, class')
+      .then(({ data }) => setStudentOptions(data || []))
+
     if (id) {
       supabase
         .from('professionals')
@@ -59,9 +68,13 @@ export default function ProfessionalForm() {
 
   const toggleArr = (arr: string[] = [], item: string) =>
     arr.includes(item) ? arr.filter((i) => i !== item) : [...arr, item]
-  const handleChange = (f: string, v: any) => setData((p: any) => ({ ...p, [f]: v }))
+  const handleChange = (f: string, v: any) => {
+    if (!canEdit) return
+    setData((p: any) => ({ ...p, [f]: v }))
+  }
 
   const handleSave = async () => {
+    if (!canEdit) return toast.error('Apenas administradores podem editar registros.')
     setLoading(true)
     try {
       if (id) {
@@ -121,7 +134,7 @@ export default function ProfessionalForm() {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <h1 className="text-3xl font-bold tracking-tight text-secondary">
-          {id ? 'Editar Profissional' : 'Novo Profissional'}
+          {id ? (canEdit ? 'Editar Profissional' : 'Visualizar Profissional') : 'Novo Profissional'}
         </h1>
         {id && (
           <Button
@@ -150,6 +163,7 @@ export default function ProfessionalForm() {
                   type={i.t || 'text'}
                   value={data[i.f] || ''}
                   onChange={(e) => handleChange(i.f, e.target.value)}
+                  disabled={!canEdit}
                 />
               </div>
             ))}
@@ -166,7 +180,7 @@ export default function ProfessionalForm() {
               <div key={i.f} className="space-y-2">
                 <Label>{i.l}</Label>
                 <Select value={data[i.f] || ''} onValueChange={(v) => handleChange(i.f, v)}>
-                  <SelectTrigger>
+                  <SelectTrigger disabled={!canEdit}>
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -195,6 +209,7 @@ export default function ProfessionalForm() {
                       className="flex items-center gap-2 cursor-pointer bg-muted/40 print:bg-transparent px-3 py-1.5 rounded-md"
                     >
                       <Checkbox
+                        disabled={!canEdit}
                         checked={data.grades?.includes(g)}
                         onCheckedChange={() => handleChange('grades', toggleArr(data.grades, g))}
                       />
@@ -212,6 +227,7 @@ export default function ProfessionalForm() {
                       className="flex items-center gap-2 cursor-pointer bg-muted/40 print:bg-transparent px-3 py-1.5 rounded-md"
                     >
                       <Checkbox
+                        disabled={!canEdit}
                         checked={data.classes?.includes(c)}
                         onCheckedChange={() => handleChange('classes', toggleArr(data.classes, c))}
                       />
@@ -228,20 +244,21 @@ export default function ProfessionalForm() {
               <h3 className="font-semibold text-lg text-secondary print:text-black">
                 Vínculo de Alunos (AEE)
               </h3>
-              <div className="grid gap-2">
-                {MOCK_STUDENTS.filter((s) => s.aee).map((s) => (
+              <div className="grid gap-2 max-h-64 overflow-y-auto p-2 border rounded-md">
+                {studentOptions.map((s) => (
                   <label
                     key={s.id}
                     className="flex items-center gap-2 bg-muted/30 print:bg-transparent p-2 rounded border print:border-none cursor-pointer"
                   >
                     <Checkbox
+                      disabled={!canEdit}
                       checked={data.students?.includes(s.id)}
                       onCheckedChange={() =>
                         handleChange('students', toggleArr(data.students, s.id))
                       }
                     />
                     <span className="text-sm">
-                      {s.name} - {s.grade} {s.classGroup}
+                      {s.name} - {s.grade} {s.class ? `Turma ${s.class}` : ''}
                     </span>
                   </label>
                 ))}
@@ -254,11 +271,13 @@ export default function ProfessionalForm() {
       <div className="fixed bottom-0 left-0 right-0 md:left-[var(--sidebar-width)] bg-background/80 backdrop-blur-md border-t p-4 flex items-center justify-end shadow-lg z-40 print:hidden">
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => navigate('/profissionais')} disabled={loading}>
-            Cancelar
+            Voltar
           </Button>
-          <Button onClick={handleSave} className="bg-primary px-6" disabled={loading}>
-            <Save className="w-4 h-4 mr-2" /> {loading ? 'Salvando...' : 'Salvar Cadastro'}
-          </Button>
+          {canEdit && (
+            <Button onClick={handleSave} className="bg-primary px-6" disabled={loading}>
+              <Save className="w-4 h-4 mr-2" /> {loading ? 'Salvando...' : 'Salvar Cadastro'}
+            </Button>
+          )}
         </div>
       </div>
     </div>
