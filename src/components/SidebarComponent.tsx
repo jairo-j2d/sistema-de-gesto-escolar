@@ -1,34 +1,33 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard,
-  Users,
-  GraduationCap,
-  Settings,
-  MessageSquare,
   BookOpen,
-  FileText,
+  GraduationCap,
   Search,
+  FileText,
+  MessageSquare,
+  Settings,
+  LayoutDashboard,
+  LogOut,
 } from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
+  SidebarFooter,
+  useSidebar,
 } from '@/components/ui/sidebar'
-import logoImg from '@/assets/icone-cumaru-pe-c3adf.jpg'
+import logoImg from '@/assets/39027474_204147847122063_635923255961583616_n-42988.png'
+import { useAuth } from '@/hooks/use-auth'
 
-const navItems = [
+const menuItems = [
   { title: 'Dashboard', icon: LayoutDashboard, url: '/' },
-  { title: 'Alunos', icon: Users, url: '/alunos' },
-  { title: 'Profissionais', icon: GraduationCap, url: '/profissionais' },
-  { title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' },
+  { title: 'Portal do Professor', icon: BookOpen, url: '/profissionais' },
+  { title: 'Aluno', icon: GraduationCap, url: '/alunos' },
   { title: 'Consultas', icon: Search, url: '/consultas' },
   { title: 'Relatórios', icon: FileText, url: '/relatorios' },
   { title: 'Mensagens', icon: MessageSquare, url: '/mensagens' },
@@ -37,31 +36,32 @@ const navItems = [
 
 export function SidebarComponent() {
   const location = useLocation()
+  const { signOut } = useAuth()
+  const { state } = useSidebar()
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link to="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent shrink-0">
-                  <img src={logoImg} alt="Logo" className="size-full object-contain" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Gilda Bertinho Gestão Escolar</span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="p-4">
+        <Link to="/" className="flex items-center gap-3 overflow-hidden">
+          <img
+            src={logoImg}
+            alt="Logo Escola Municipal"
+            className="w-8 h-8 flex-shrink-0 object-contain rounded-md"
+          />
+          {state === 'expanded' && (
+            <span className="font-semibold text-xs leading-tight whitespace-nowrap">
+              Escola Municipal
+              <br />
+              Prof. Gilda Bertino Gomes
+            </span>
+          )}
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
+              {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
@@ -72,7 +72,7 @@ export function SidebarComponent() {
                     tooltip={item.title}
                   >
                     <Link to={item.url}>
-                      <item.icon className="size-4 shrink-0" />
+                      <item.icon className="w-4 h-4" />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
@@ -82,8 +82,16 @@ export function SidebarComponent() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>{/* Footer items if needed */}</SidebarFooter>
-      <SidebarRail />
+      <SidebarFooter className="p-4">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => signOut()} tooltip="Sair">
+              <LogOut className="w-4 h-4" />
+              <span>Sair</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }
