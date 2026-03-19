@@ -32,14 +32,35 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { setAIChatOpen } = useContext(AppContext)
   const [students, setStudents] = useState<any[]>([])
+  const [stats, setStats] = useState({ total: 0, active: 0, aee: 0, transport: 0 })
 
   useEffect(() => {
-    supabase
-      .from('students')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(3)
-      .then(({ data }) => setStudents(data || []))
+    const fetchData = async () => {
+      const [{ data: allStudents }, { data: recentStudents }] = await Promise.all([
+        supabase.from('students').select('status, metadata'),
+        supabase
+          .from('students')
+          .select('id, name, grade, class, created_at')
+          .order('created_at', { ascending: false })
+          .limit(3),
+      ])
+
+      if (allStudents) {
+        let active = 0
+        let aee = 0
+        let transport = 0
+        allStudents.forEach((s) => {
+          if (s.status === 'Ativo') active++
+          if (s.metadata?.aee === true) aee++
+          if (s.metadata?.publicTransport === true) transport++
+        })
+        setStats({ total: allStudents.length, active, aee, transport })
+      }
+
+      if (recentStudents) setStudents(recentStudents)
+    }
+
+    fetchData()
   }, [])
 
   return (
@@ -49,10 +70,15 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Alunos" value={1659} icon={Users} color="#1A237E" />
-        <StatCard title="Matrículas Ativas" value={1520} icon={GraduationCap} color="#2E7D32" />
-        <StatCard title="Alunos AEE" value={84} icon={Activity} color="#FBC02D" />
-        <StatCard title="Transporte Escolar" value={430} icon={Bus} color="#D32F2F" />
+        <StatCard title="Total Alunos" value={stats.total} icon={Users} color="#1A237E" />
+        <StatCard
+          title="Matrículas Ativas"
+          value={stats.active}
+          icon={GraduationCap}
+          color="#2E7D32"
+        />
+        <StatCard title="Alunos AEE" value={stats.aee} icon={Activity} color="#FBC02D" />
+        <StatCard title="Transporte Escolar" value={stats.transport} icon={Bus} color="#D32F2F" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -1,6 +1,13 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 export function HealthDataTab({ data, onChange }: any) {
   return (
@@ -56,11 +63,21 @@ export function HealthDataTab({ data, onChange }: any) {
           {data.publicTransport && (
             <div className="pl-7 space-y-2 animate-fade-in">
               <Label>Transporte utilizado</Label>
-              <Input
-                placeholder="Ex: Ônibus Rota 3..."
+              <Select
                 value={data.transportType || ''}
-                onChange={(e) => onChange('transportType', e.target.value)}
-              />
+                onValueChange={(v) => onChange('transportType', v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o tipo..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Ônibus">Ônibus</SelectItem>
+                  <SelectItem value="Micro-ônibus">Micro-ônibus</SelectItem>
+                  <SelectItem value="Van">Van</SelectItem>
+                  <SelectItem value="Toyota">Toyota</SelectItem>
+                  <SelectItem value="Outros">Outros</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>

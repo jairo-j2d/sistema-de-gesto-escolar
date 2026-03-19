@@ -76,12 +76,15 @@ export default function ProfessionalForm() {
   const handleSave = async () => {
     if (!canEdit) return toast.error('Apenas administradores podem editar registros.')
     setLoading(true)
+
+    const { transport_used, ...saveData } = data
+
     try {
       if (id) {
-        const { error } = await supabase.from('professionals').update(data).eq('id', id)
+        const { error } = await supabase.from('professionals').update(saveData).eq('id', id)
         if (error) throw error
       } else {
-        const { error } = await supabase.from('professionals').insert([data])
+        const { error } = await supabase.from('professionals').insert([saveData])
         if (error) throw error
       }
       toast.success('Profissional salvo com sucesso!')
@@ -101,7 +104,7 @@ export default function ProfessionalForm() {
     { l: 'Telefone', f: 'phone' },
   ]
   const selectFields = [
-    { l: 'Vínculo', f: 'employment_type', opts: ['Efetivo', 'Contratado'] },
+    { l: 'Vínculo', f: 'employment_type', opts: ['Efetivo', 'Contratado', 'Comissionado'] },
     { l: 'Carga Horária', f: 'workload', opts: ['100 h/a', '150 h/a', '200 h/a'] },
     {
       l: 'Escolaridade',
@@ -114,11 +117,17 @@ export default function ProfessionalForm() {
         'Analfabeto Funcional',
       ],
     },
-    { l: 'Função', f: 'role', opts: ['Professor(a)', 'Coordenador(a)', 'Apoio Pedagógico'] },
     {
-      l: 'Transporte',
-      f: 'transport_used',
-      opts: ['Ônibus', 'Micro-Ônibus', 'Toyota', 'Van', 'Outros'],
+      l: 'Função',
+      f: 'role',
+      opts: [
+        'Professor(a)',
+        'Coordenador(a)',
+        'Apoio Pedagógico',
+        'Diretor(a)',
+        'Vice Diretor(a)',
+        'Secretário(a)',
+      ],
     },
   ]
 
