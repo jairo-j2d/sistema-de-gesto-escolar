@@ -1,11 +1,17 @@
 // AVOID UPDATING THIS FILE DIRECTLY. It is automatically generated.
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '14.4'
+    PostgrestVersion: "14.4"
   }
   public: {
     Tables: {
@@ -42,13 +48,40 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'academic_records_student_id_fkey'
-            columns: ['student_id']
+            foreignKeyName: "academic_records_student_id_fkey"
+            columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: 'students'
-            referencedColumns: ['id']
+            referencedRelation: "students"
+            referencedColumns: ["id"]
           },
         ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          record_id: string | null
+          table_name: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          record_id?: string | null
+          table_name: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          record_id?: string | null
+          table_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
       }
       generated_reports: {
         Row: {
@@ -115,7 +148,6 @@ export type Database = {
           role: string | null
           status: string | null
           students: string[] | null
-          transport_used: string | null
           updated_at: string | null
           user_id: string | null
           workload: string | null
@@ -136,7 +168,6 @@ export type Database = {
           role?: string | null
           status?: string | null
           students?: string[] | null
-          transport_used?: string | null
           updated_at?: string | null
           user_id?: string | null
           workload?: string | null
@@ -157,7 +188,6 @@ export type Database = {
           role?: string | null
           status?: string | null
           students?: string[] | null
-          transport_used?: string | null
           updated_at?: string | null
           user_id?: string | null
           workload?: string | null
@@ -174,7 +204,9 @@ export type Database = {
           inep_code: string | null
           logo_url: string | null
           portaria: string | null
+          published_at: string | null
           school_name: string
+          school_registration: string | null
           secretary_signature_url: string | null
           updated_at: string | null
         }
@@ -187,7 +219,9 @@ export type Database = {
           inep_code?: string | null
           logo_url?: string | null
           portaria?: string | null
+          published_at?: string | null
           school_name?: string
+          school_registration?: string | null
           secretary_signature_url?: string | null
           updated_at?: string | null
         }
@@ -200,7 +234,9 @@ export type Database = {
           inep_code?: string | null
           logo_url?: string | null
           portaria?: string | null
+          published_at?: string | null
           school_name?: string
+          school_registration?: string | null
           secretary_signature_url?: string | null
           updated_at?: string | null
         }
@@ -236,11 +272,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'student_occurrences_student_id_fkey'
-            columns: ['student_id']
+            foreignKeyName: "student_occurrences_student_id_fkey"
+            columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: 'students'
-            referencedColumns: ['id']
+            referencedRelation: "students"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -317,31 +353,33 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -350,23 +388,23 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -375,23 +413,23 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -400,36 +438,36 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
@@ -437,6 +475,7 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
 
 // ====== DATABASE EXTENDED CONTEXT (auto-generated) ======
 // This section contains actual PostgreSQL column types, constraints, RLS policies,
@@ -456,6 +495,13 @@ export const Constants = {
 //   grade: text (nullable)
 //   status: text (nullable)
 //   grades: jsonb (nullable, default: '{}'::jsonb)
+//   created_at: timestamp with time zone (nullable, default: now())
+// Table: audit_logs
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (nullable)
+//   action: text (not null)
+//   table_name: text (not null)
+//   record_id: uuid (nullable)
 //   created_at: timestamp with time zone (nullable, default: now())
 // Table: generated_reports
 //   id: uuid (not null, default: gen_random_uuid())
@@ -487,7 +533,6 @@ export const Constants = {
 //   status: text (nullable, default: 'Ativo'::text)
 //   created_at: timestamp with time zone (nullable, default: now())
 //   updated_at: timestamp with time zone (nullable, default: now())
-//   transport_used: text (nullable)
 //   user_id: uuid (nullable)
 // Table: school_settings
 //   id: uuid (not null, default: gen_random_uuid())
@@ -501,6 +546,8 @@ export const Constants = {
 //   director_signature_url: text (nullable)
 //   coordinator_signature_url: text (nullable)
 //   secretary_signature_url: text (nullable)
+//   published_at: text (nullable)
+//   school_registration: text (nullable)
 // Table: student_occurrences
 //   id: uuid (not null, default: gen_random_uuid())
 //   student_id: uuid (not null)
@@ -531,6 +578,9 @@ export const Constants = {
 // Table: academic_records
 //   PRIMARY KEY academic_records_pkey: PRIMARY KEY (id)
 //   FOREIGN KEY academic_records_student_id_fkey: FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
+// Table: audit_logs
+//   PRIMARY KEY audit_logs_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY audit_logs_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL
 // Table: generated_reports
 //   PRIMARY KEY generated_reports_pkey: PRIMARY KEY (id)
 // Table: messages
@@ -560,6 +610,9 @@ export const Constants = {
 //   Policy "academic_update" (UPDATE, PERMISSIVE) roles={authenticated}
 //     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
 //     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
+// Table: audit_logs
+//   Policy "admin_select_audit_logs" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = 'Administrador'::text)
 // Table: generated_reports
 //   Policy "reports_delete" (DELETE, PERMISSIVE) roles={authenticated}
 //     USING: (get_user_role() = 'Administrador'::text)
@@ -626,7 +679,25 @@ export const Constants = {
 //   AS $function$
 //     SELECT role FROM public.professionals WHERE user_id = auth.uid() LIMIT 1;
 //   $function$
-//
+//   
+// FUNCTION log_audit_event()
+//   CREATE OR REPLACE FUNCTION public.log_audit_event()
+//    RETURNS trigger
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   BEGIN
+//       INSERT INTO public.audit_logs (user_id, action, table_name, record_id)
+//       VALUES (
+//           auth.uid(),
+//           TG_OP,
+//           TG_TABLE_NAME,
+//           COALESCE(NEW.id, OLD.id)
+//       );
+//       RETURN NULL;
+//   END;
+//   $function$
+//   
 // FUNCTION update_students_updated_at()
 //   CREATE OR REPLACE FUNCTION public.update_students_updated_at()
 //    RETURNS trigger
@@ -637,12 +708,16 @@ export const Constants = {
 //       RETURN NEW;
 //   END;
 //   $function$
-//
+//   
 
 // --- TRIGGERS ---
+// Table: professionals
+//   audit_professionals_trigger: CREATE TRIGGER audit_professionals_trigger AFTER INSERT OR DELETE OR UPDATE ON public.professionals FOR EACH ROW EXECUTE FUNCTION log_audit_event()
 // Table: students
+//   audit_students_trigger: CREATE TRIGGER audit_students_trigger AFTER INSERT OR DELETE OR UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION log_audit_event()
 //   update_students_updated_at_trigger: CREATE TRIGGER update_students_updated_at_trigger BEFORE UPDATE ON public.students FOR EACH ROW EXECUTE FUNCTION update_students_updated_at()
 
 // --- INDEXES ---
 // Table: students
 //   CREATE UNIQUE INDEX students_enrollment_number_key ON public.students USING btree (enrollment_number)
+
