@@ -1,126 +1,86 @@
+import { Link, useLocation } from 'react-router-dom'
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  CalendarDays,
+  Settings,
+  MessageSquare,
+  BookOpen,
+  FileText,
+} from 'lucide-react'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
 } from '@/components/ui/sidebar'
-import {
-  Home,
-  Users,
-  Search,
-  FileText,
-  Settings,
-  LogOut,
-  Briefcase,
-  BookOpen,
-  MessageSquare,
-} from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
-import { useAuth } from '@/hooks/use-auth'
+import logoImg from '@/assets/icone-cumaru-pe-c3adf.jpg'
+
+const navItems = [
+  { title: 'Dashboard', icon: LayoutDashboard, url: '/' },
+  { title: 'Alunos', icon: Users, url: '/alunos' },
+  { title: 'Professores', icon: GraduationCap, url: '/professores' },
+  { title: 'Turmas', icon: BookOpen, url: '/turmas' },
+  { title: 'Calendário', icon: CalendarDays, url: '/calendario' },
+  { title: 'Relatórios', icon: FileText, url: '/relatorios' },
+  { title: 'Chat', icon: MessageSquare, url: '/chat' },
+  { title: 'Configurações', icon: Settings, url: '/configuracoes' },
+]
 
 export function SidebarComponent() {
   const location = useLocation()
-  const { signOut, role } = useAuth()
-
-  const items = []
-
-  // Always show Dashboard as root
-  items.push({ title: 'Dashboard', icon: Home, url: '/' })
-
-  if (
-    ['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)', 'Professor(a)'].includes(
-      role,
-    )
-  ) {
-    items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
-  }
-
-  if (['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)'].includes(role)) {
-    items.push({ title: 'Aluno', icon: Users, url: '/alunos' })
-  }
-
-  if (['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(role)) {
-    items.push({ title: 'Profissionais', icon: Briefcase, url: '/profissionais' })
-  }
-
-  if (['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)'].includes(role)) {
-    items.push({ title: 'Consultas', icon: Search, url: '/consultas' })
-  }
-
-  if (['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)'].includes(role)) {
-    items.push({ title: 'Relatórios', icon: FileText, url: '/relatorios' })
-  }
-
-  if (
-    ['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)', 'Professor(a)'].includes(
-      role,
-    )
-  ) {
-    items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
-  }
-
-  if (role === 'Administrador') {
-    items.push({ title: 'Configurações', icon: Settings, url: '/configuracoes' })
-  }
 
   return (
-    <Sidebar className="border-r shadow-sm print:hidden">
-      <SidebarHeader className="h-16 flex items-center px-4 border-b border-white/10 bg-secondary bg-pattern-hex-white text-white shrink-0">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary rounded flex items-center justify-center font-bold text-white shadow-sm shrink-0">
-            GB
-          </div>
-          <div className="flex flex-col overflow-hidden">
-            <span className="font-bold text-sm leading-tight truncate">Gilda Bertino</span>
-            <span className="text-[10px] text-white/70">Gestão Escolar</span>
-          </div>
-        </div>
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link to="/">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent shrink-0">
+                  <img src={logoImg} alt="Logo" className="size-full object-contain" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Gilda Bertinho Gestão Escolar</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className="bg-secondary bg-pattern-hex-white text-sidebar-foreground">
+      <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel>Menu Principal</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="mt-4 gap-2 px-2 relative z-10">
-              {items.map((item) => {
-                const isActive =
-                  location.pathname === item.url ||
-                  (location.pathname.startsWith(item.url) && item.url !== '/')
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive}
-                      className="h-10 text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-primary data-[active=true]:text-white"
-                    >
-                      <Link to={item.url}>
-                        <item.icon className="w-5 h-5 mr-3" />
-                        <span className="font-medium">{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
+            <SidebarMenu>
+              {navItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === item.url}
+                    tooltip={item.title}
+                  >
+                    <Link to={item.url}>
+                      <item.icon className="size-4 shrink-0" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-white/10 bg-secondary bg-pattern-hex-white p-4">
-        <SidebarMenu className="relative z-10">
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              onClick={() => signOut()}
-              className="text-red-400 hover:text-red-300 hover:bg-white/5 cursor-pointer h-10"
-            >
-              <LogOut className="w-5 h-5 mr-3" />
-              <span className="font-medium">Sair do Sistema</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      <SidebarFooter>{/* Footer items if needed */}</SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }

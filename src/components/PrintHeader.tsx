@@ -1,66 +1,16 @@
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import logoImg from '@/assets/icone-cumaru-pe-c3adf.jpg'
 
-export function PrintHeader() {
-  const [settings, setSettings] = useState<any>(null)
-
-  useEffect(() => {
-    supabase
-      .from('school_settings')
-      .select('*')
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }) => {
-        setSettings(
-          data || {
-            school_name: 'Escola Modelo',
-            address: 'Endereço não configurado',
-            cnpj: '00.000.000/0000-00',
-            inep_code: '00000000',
-            portaria: 'N/A',
-          },
-        )
-      })
-  }, [])
-
-  if (!settings) return null
-
+export function PrintHeader({ title }: { title?: string }) {
   return (
-    <div className="hidden print:flex flex-col items-center justify-center border-b-2 border-slate-800 pb-4 mb-6 text-black w-full">
-      <style>{`
-        @media print {
-          @page { margin: 1cm; }
-          body { 
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact; 
-            background: white !important; 
-          }
-          input, select, textarea, .radix-select-trigger {
-            border: 1px solid transparent !important;
-            background: transparent !important;
-            color: black !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-            height: auto !important;
-            min-height: 0 !important;
-          }
-          .lucide-chevron-down { display: none !important; }
-          .print\\:hidden { display: none !important; }
-        }
-      `}</style>
-      {settings.logo_url && (
-        <img src={settings.logo_url} alt="Logo" className="w-20 h-20 object-contain mb-3" />
-      )}
-      <h1 className="text-xl font-bold uppercase tracking-wide text-center">
-        {settings.school_name || 'Escola Modelo'}
-      </h1>
-      <div className="text-xs text-center mt-1 text-slate-700 font-medium">
-        <p>{settings.address || 'Endereço não configurado'}</p>
-        <p className="mt-1">
-          CNPJ: {settings.cnpj || '-'} &bull; INEP: {settings.inep_code || '-'} &bull; Portaria:{' '}
-          {settings.portaria || '-'}
-        </p>
+    <div className="hidden print:block mb-8 border-b border-border pb-4">
+      <div className="flex items-center gap-6 justify-center">
+        <img src={logoImg} alt="Logo" className="size-16 object-contain shrink-0" />
+        <div className="text-center">
+          <h1 className="text-2xl font-bold tracking-tight">Gilda Bertinho Gestão Escolar</h1>
+          <p className="text-sm text-muted-foreground mt-1">Sistema Integrado de Gestão Escolar</p>
+        </div>
       </div>
+      {title && <h2 className="text-xl font-semibold mt-6 text-center">{title}</h2>}
     </div>
   )
 }
