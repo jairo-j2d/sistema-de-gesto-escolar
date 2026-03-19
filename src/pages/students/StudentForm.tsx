@@ -8,6 +8,8 @@ import { PersonalDataTab } from './tabs/PersonalDataTab'
 import { AcademicDataTab } from './tabs/AcademicDataTab'
 import { HealthDataTab } from './tabs/HealthDataTab'
 import { ObservationsTab } from './tabs/ObservationsTab'
+import { OccurrencesTab } from './tabs/OccurrencesTab'
+import { AcademicHistoryTab } from './tabs/AcademicHistoryTab'
 import { PrintHeader } from '@/components/PrintHeader'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -164,28 +166,44 @@ export default function StudentForm() {
               <TabsList className="w-full flex justify-start rounded-none border-b h-auto bg-slate-50 p-0 overflow-x-auto print:hidden">
                 <TabsTrigger
                   value="pessoal"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-6 text-sm font-semibold"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-5 text-sm font-semibold whitespace-nowrap"
                 >
                   Dados Pessoais
                 </TabsTrigger>
                 <TabsTrigger
                   value="academico"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-6 text-sm font-semibold"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-5 text-sm font-semibold whitespace-nowrap"
                 >
                   Dados Acadêmicos
                 </TabsTrigger>
                 <TabsTrigger
                   value="saude"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-6 text-sm font-semibold"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-5 text-sm font-semibold whitespace-nowrap"
                 >
                   Saúde e Social
                 </TabsTrigger>
                 <TabsTrigger
                   value="obs"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-6 text-sm font-semibold"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-5 text-sm font-semibold whitespace-nowrap"
                 >
                   Observações
                 </TabsTrigger>
+                {id && (
+                  <TabsTrigger
+                    value="ocorrencias"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-5 text-sm font-semibold whitespace-nowrap"
+                  >
+                    Ocorrências
+                  </TabsTrigger>
+                )}
+                {id && (
+                  <TabsTrigger
+                    value="historico"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-white data-[state=active]:text-primary h-14 px-5 text-sm font-semibold whitespace-nowrap"
+                  >
+                    Histórico Escolar
+                  </TabsTrigger>
+                )}
               </TabsList>
               <div className="min-h-[400px]">
                 <TabsContent value="pessoal" className="m-0">
@@ -200,6 +218,16 @@ export default function StudentForm() {
                 <TabsContent value="obs" className="m-0">
                   <ObservationsTab data={data} onChange={handleChange} />
                 </TabsContent>
+                {id && (
+                  <TabsContent value="ocorrencias" className="m-0">
+                    <OccurrencesTab studentId={id} />
+                  </TabsContent>
+                )}
+                {id && (
+                  <TabsContent value="historico" className="m-0">
+                    <AcademicHistoryTab studentId={id} />
+                  </TabsContent>
+                )}
               </div>
             </Tabs>
           </CardContent>

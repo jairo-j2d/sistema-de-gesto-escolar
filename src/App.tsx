@@ -7,12 +7,13 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/Login'
 import StudentList from './pages/students/StudentList'
 import StudentForm from './pages/students/StudentForm'
+import AcademicHistoryPrint from './pages/students/AcademicHistoryPrint'
 import ProfessionalList from './pages/professionals/ProfessionalList'
 import ProfessionalForm from './pages/professionals/ProfessionalForm'
 import TeacherPortal from './pages/teacher-portal/TeacherPortal'
 import QueriesPage from './pages/queries/QueriesPage'
 import ReportsPage from './pages/reports/ReportsPage'
-import ComingSoon from './pages/ComingSoon'
+import SettingsPage from './pages/settings/SettingsPage'
 import NotFound from './pages/NotFound'
 import { AppProvider } from './context/AppProvider'
 
@@ -24,6 +25,7 @@ const App = () => (
         <Sonner position="top-right" />
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/alunos/:id/historico" element={<AcademicHistoryPrint />} />
           <Route element={<Layout />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="/alunos" element={<StudentList />} />
@@ -35,10 +37,7 @@ const App = () => (
             <Route path="/portal-professor" element={<TeacherPortal />} />
             <Route path="/consultas" element={<QueriesPage />} />
             <Route path="/relatorios" element={<ReportsPage />} />
-            <Route
-              path="/configuracoes"
-              element={<ComingSoon title="Configurações do Sistema" />}
-            />
+            <Route path="/configuracoes" element={<SettingsPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
