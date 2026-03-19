@@ -14,12 +14,12 @@ ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
 
 -- Helper function for RLS
 CREATE OR REPLACE FUNCTION public.get_user_role()
-RETURNS text AS $
+RETURNS text AS $$
   SELECT role FROM public.professionals WHERE user_id = auth.uid() LIMIT 1;
-$ LANGUAGE sql SECURITY DEFINER;
+$$ LANGUAGE sql SECURITY DEFINER;
 
 -- Drop existing policies to recreate cleanly
-DO $
+DO $$
 DECLARE
   pol record;
 BEGIN
@@ -31,7 +31,7 @@ BEGIN
   LOOP
     EXECUTE format('DROP POLICY IF EXISTS %I ON public.%I', pol.policyname, pol.tablename);
   END LOOP;
-END $;
+END $$;
 
 -- Policies for students
 CREATE POLICY "students_select" ON public.students FOR SELECT TO authenticated
@@ -125,4 +125,3 @@ BEGIN
     (gen_random_uuid(), 'Beatriz Lima de Souza', '1661', '8º Ano', 'B', 'Inativo')
   ON CONFLICT DO NOTHING;
 END $seed$;
-
