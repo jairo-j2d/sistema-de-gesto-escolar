@@ -25,34 +25,47 @@ import { useAuth } from '@/hooks/use-auth'
 
 export function SidebarComponent() {
   const location = useLocation()
-  const { signOut, profile } = useAuth()
-  const role = profile?.role || ''
+  const { signOut, role } = useAuth()
 
   const items = []
 
-  if (role === 'Administrador' || role === 'Diretor(a)' || role === 'Secretário(a)') {
-    items.push({ title: 'Dashboard', icon: Home, url: '/' })
+  // Always show Dashboard as root
+  items.push({ title: 'Dashboard', icon: Home, url: '/' })
+
+  if (
+    ['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)', 'Professor(a)'].includes(
+      role,
+    )
+  ) {
     items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
-    items.push({ title: 'Alunos', icon: Users, url: '/alunos' })
+  }
+
+  if (['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)'].includes(role)) {
+    items.push({ title: 'Aluno', icon: Users, url: '/alunos' })
+  }
+
+  if (['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(role)) {
     items.push({ title: 'Profissionais', icon: Briefcase, url: '/profissionais' })
+  }
+
+  if (['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)'].includes(role)) {
     items.push({ title: 'Consultas', icon: Search, url: '/consultas' })
+  }
+
+  if (['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)'].includes(role)) {
     items.push({ title: 'Relatórios', icon: FileText, url: '/relatorios' })
+  }
+
+  if (
+    ['Administrador', 'Diretor(a)', 'Secretário(a)', 'Coordenador(a)', 'Professor(a)'].includes(
+      role,
+    )
+  ) {
     items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
-    if (role === 'Administrador') {
-      items.push({ title: 'Configurações', icon: Settings, url: '/configuracoes' })
-    }
-  } else if (role === 'Coordenador(a)') {
-    items.push({ title: 'Dashboard', icon: Home, url: '/' })
-    items.push({ title: 'Alunos', icon: Users, url: '/alunos' })
-    items.push({ title: 'Consultas', icon: Search, url: '/consultas' })
-    items.push({ title: 'Relatórios', icon: FileText, url: '/relatorios' })
-    items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
-  } else if (role === 'Professor(a)') {
-    items.push({ title: 'Dashboard', icon: Home, url: '/' })
-    items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
-    items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
-  } else {
-    items.push({ title: 'Dashboard', icon: Home, url: '/' })
+  }
+
+  if (role === 'Administrador') {
+    items.push({ title: 'Configurações', icon: Settings, url: '/configuracoes' })
   }
 
   return (

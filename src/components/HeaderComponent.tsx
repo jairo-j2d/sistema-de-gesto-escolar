@@ -19,7 +19,7 @@ export function HeaderComponent() {
   const location = useLocation()
   const path = location.pathname.split('/').filter(Boolean)
   const { setAIChatOpen } = useContext(AppContext)
-  const { profile, user } = useAuth()
+  const { profile, user, role } = useAuth()
 
   return (
     <header className="h-16 border-b bg-background flex items-center justify-between px-4 sticky top-0 z-30 shadow-sm relative overflow-hidden shrink-0">
@@ -64,7 +64,7 @@ export function HeaderComponent() {
         <div className="w-px h-6 bg-border mx-1"></div>
         <div className="hidden md:flex flex-col text-right mr-2">
           <span className="text-sm font-bold text-secondary">{profile?.name || user?.email}</span>
-          <span className="text-xs text-muted-foreground">{profile?.role || 'Usuário'}</span>
+          <span className="text-xs text-muted-foreground">{role || 'Usuário'}</span>
         </div>
         <Avatar className="w-8 h-8 ring-2 ring-primary/20">
           <AvatarImage

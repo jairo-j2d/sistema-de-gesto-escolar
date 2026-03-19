@@ -6,7 +6,7 @@ import { AIChatDrawer } from './chat/AIChatDrawer'
 import { useAuth } from '@/hooks/use-auth'
 
 export default function Layout() {
-  const { user, profile, loading } = useAuth()
+  const { user, role, loading } = useAuth()
   const location = useLocation()
 
   if (loading)
@@ -16,8 +16,6 @@ export default function Layout() {
       </div>
     )
   if (!user) return <Navigate to="/login" replace />
-
-  const role = profile?.role || ''
 
   // RBAC Routing Control
   if (

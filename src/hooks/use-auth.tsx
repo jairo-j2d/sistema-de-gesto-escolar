@@ -6,6 +6,7 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   profile: any | null
+  role: string
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => Promise<{ error: any }>
   loading: boolean
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<any | null>(null)
+  const [role, setRole] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null)
       if (!session) {
         setProfile(null)
+        setRole('')
         setLoading(false)
       }
     })
@@ -48,20 +51,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (user) {
-      supabase
-        .from('professionals')
-        .select('*')
-        .eq('user_id', user.id)
-        .single()
-        .then(({ data, error }) => {
-          if (!error && data) {
-            setProfile(data)
+      const fetchUserData = async () => {
+        try {
+          const [profileRes, roleRes] = await Promise.all([
+            supabase.from('professionals').select('*').eq('user_id', user.id).single(),
+            supabase.rpc('get_user_role'),
+          ])
+
+          if (profileRes.data) setProfile(profileRes.data)
+
+          let fetchedRole = ''
+          if (roleRes.data) {
+            fetchedRole = roleRes.data as string
+          } else if (profileRes.data?.role) {
+            fetchedRole = profileRes.data.role
+          } else {
+            // Development fallback roles based on seed emails
+            if (user.email === 'admin@escola.gov.br') fetchedRole = 'Administrador'
+            else if (user.email === 'coord@escola.gov.br') fetchedRole = 'Coordenador(a)'
+            else if (user.email === 'prof@escola.gov.br') fetchedRole = 'Professor(a)'
           }
+          setRole(fetchedRole)
+        } catch (err) {
+          console.error(err)
+        } finally {
           setLoading(false)
-        })
-        .catch(() => {
-          setLoading(false)
-        })
+        }
+      }
+      fetchUserData()
     }
   }, [user])
 
@@ -76,7 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, profile, signIn, signOut, loading }}>
+    <AuthContext.Provider value={{ user, session, profile, role, signIn, signOut, loading }}>
       {children}
     </AuthContext.Provider>
   )
