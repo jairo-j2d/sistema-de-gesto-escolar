@@ -54,11 +54,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const fetchUserData = async () => {
         try {
           const [profileRes, roleRes] = await Promise.all([
-            supabase.from('professionals').select('*').eq('user_id', user.id).single(),
+            supabase.from('professionals').select('*').eq('user_id', user.id).maybeSingle(),
             supabase.rpc('get_user_role'),
           ])
 
-          if (profileRes.data) setProfile(profileRes.data)
+          if (profileRes.data) {
+            setProfile(profileRes.data)
+          } else {
+            setProfile(null)
+          }
 
           let fetchedRole = ''
           if (roleRes.data) {
@@ -73,7 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
           setRole(fetchedRole)
         } catch (err) {
-          console.error(err)
+          console.error('Error fetching user data:', err)
         } finally {
           setLoading(false)
         }

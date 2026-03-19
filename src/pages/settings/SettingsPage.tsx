@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { supabase } from '@/lib/supabase/client'
 import { toast } from 'sonner'
-import { Building2, Save, PenTool } from 'lucide-react'
+import { Building2, Save, PenTool, ShieldAlert } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<any>({})
   const [saving, setSaving] = useState(false)
+  const { role, profile, user } = useAuth()
 
   useEffect(() => {
     supabase
@@ -82,6 +84,19 @@ export default function SettingsPage() {
     { f: 'secretary_signature_url', l: 'Secretário(a)' },
   ]
 
+  if (role !== 'Administrador') {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 text-center animate-fade-in">
+        <ShieldAlert className="w-16 h-16 text-muted-foreground mb-4" />
+        <h2 className="text-2xl font-bold text-slate-800">Acesso Negado</h2>
+        <p className="text-muted-foreground mt-2 max-w-md">
+          Você não tem permissão para acessar as configurações do sistema. Esta área é restrita a
+          administradores.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6 animate-fade-in pb-12 max-w-5xl mx-auto">
       <div>
@@ -91,6 +106,16 @@ export default function SettingsPage() {
         <p className="text-muted-foreground mt-1">
           Gerencie dados institucionais e assinaturas digitais para documentos.
         </p>
+        {!profile && (
+          <div className="mt-4 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-md text-sm flex items-start gap-2">
+            <ShieldAlert className="w-5 h-5 shrink-0" />
+            <p>
+              <strong>Aviso:</strong> Você está acessando como Administrador, mas seu usuário (
+              {user?.email}) ainda não possui um registro vinculado na tabela de profissionais. O
+              sistema continuará funcionando normalmente.
+            </p>
+          </div>
+        )}
       </div>
 
       <Card className="border-t-4 border-t-secondary shadow-md">
