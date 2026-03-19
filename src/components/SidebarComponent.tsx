@@ -37,12 +37,18 @@ const menuItems = [
 export function SidebarComponent() {
   const location = useLocation()
   const { signOut } = useAuth()
-  const { state } = useSidebar()
+  const { state, setOpenMobile, isMobile } = useSidebar()
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
-        <Link to="/" className="flex items-center gap-3 overflow-hidden">
+        <Link to="/" className="flex items-center gap-3 overflow-hidden" onClick={handleLinkClick}>
           <img
             src={logoImg}
             alt="Logo Escola Municipal"
@@ -71,7 +77,7 @@ export function SidebarComponent() {
                     }
                     tooltip={item.title}
                   >
-                    <Link to={item.url}>
+                    <Link to={item.url} onClick={handleLinkClick}>
                       <item.icon className="w-4 h-4" />
                       <span>{item.title}</span>
                     </Link>
