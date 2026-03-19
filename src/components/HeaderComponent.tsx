@@ -22,7 +22,7 @@ export function HeaderComponent() {
   const { profile, user } = useAuth()
 
   return (
-    <header className="h-16 border-b bg-background flex items-center justify-between px-4 sticky top-0 z-30 shadow-sm relative overflow-hidden">
+    <header className="h-16 border-b bg-background flex items-center justify-between px-4 sticky top-0 z-30 shadow-sm relative overflow-hidden shrink-0">
       <div className="absolute inset-0 bg-pattern-hex-white opacity-50 pointer-events-none filter invert"></div>
       <div className="flex items-center gap-4 relative z-10">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
@@ -63,8 +63,8 @@ export function HeaderComponent() {
         </Button>
         <div className="w-px h-6 bg-border mx-1"></div>
         <div className="hidden md:flex flex-col text-right mr-2">
-          <span className="text-sm font-bold text-secondary">{profile?.name}</span>
-          <span className="text-xs text-muted-foreground">{profile?.role}</span>
+          <span className="text-sm font-bold text-secondary">{profile?.name || user?.email}</span>
+          <span className="text-xs text-muted-foreground">{profile?.role || 'Usuário'}</span>
         </div>
         <Avatar className="w-8 h-8 ring-2 ring-primary/20">
           <AvatarImage

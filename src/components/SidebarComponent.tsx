@@ -43,19 +43,21 @@ export function SidebarComponent() {
     }
   } else if (role === 'Coordenador(a)') {
     items.push({ title: 'Dashboard', icon: Home, url: '/' })
-    items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
     items.push({ title: 'Alunos', icon: Users, url: '/alunos' })
     items.push({ title: 'Consultas', icon: Search, url: '/consultas' })
     items.push({ title: 'Relatórios', icon: FileText, url: '/relatorios' })
     items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
   } else if (role === 'Professor(a)') {
+    items.push({ title: 'Dashboard', icon: Home, url: '/' })
     items.push({ title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' })
     items.push({ title: 'Mensagens', icon: MessageSquare, url: '/mensagens' })
+  } else {
+    items.push({ title: 'Dashboard', icon: Home, url: '/' })
   }
 
   return (
-    <Sidebar className="border-r shadow-sm">
-      <SidebarHeader className="h-16 flex items-center px-4 border-b border-white/10 bg-secondary bg-pattern-hex-white text-white">
+    <Sidebar className="border-r shadow-sm print:hidden">
+      <SidebarHeader className="h-16 flex items-center px-4 border-b border-white/10 bg-secondary bg-pattern-hex-white text-white shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-primary rounded flex items-center justify-center font-bold text-white shadow-sm shrink-0">
             GB
@@ -76,7 +78,11 @@ export function SidebarComponent() {
                   (location.pathname.startsWith(item.url) && item.url !== '/')
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={isActive} className="h-10">
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      className="h-10 text-white/80 hover:bg-white/10 hover:text-white data-[active=true]:bg-primary data-[active=true]:text-white"
+                    >
                       <Link to={item.url}>
                         <item.icon className="w-5 h-5 mr-3" />
                         <span className="font-medium">{item.title}</span>
@@ -94,7 +100,7 @@ export function SidebarComponent() {
           <SidebarMenuItem>
             <SidebarMenuButton
               onClick={() => signOut()}
-              className="text-red-400 hover:text-red-300 hover:bg-white/5 cursor-pointer"
+              className="text-red-400 hover:text-red-300 hover:bg-white/5 cursor-pointer h-10"
             >
               <LogOut className="w-5 h-5 mr-3" />
               <span className="font-medium">Sair do Sistema</span>

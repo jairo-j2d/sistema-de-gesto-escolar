@@ -1,5 +1,5 @@
 import { Outlet, Navigate, useLocation } from 'react-router-dom'
-import { SidebarProvider } from '@/components/ui/sidebar'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { SidebarComponent } from './SidebarComponent'
 import { HeaderComponent } from './HeaderComponent'
 import { AIChatDrawer } from './chat/AIChatDrawer'
@@ -9,7 +9,12 @@ export default function Layout() {
   const { user, profile, loading } = useAuth()
   const location = useLocation()
 
-  if (loading) return <div className="flex h-screen items-center justify-center">Carregando...</div>
+  if (loading)
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-background text-muted-foreground font-medium">
+        Carregando...
+      </div>
+    )
   if (!user) return <Navigate to="/login" replace />
 
   const role = profile?.role || ''
@@ -17,10 +22,11 @@ export default function Layout() {
   // RBAC Routing Control
   if (
     role === 'Professor(a)' &&
+    location.pathname !== '/' &&
     !location.pathname.startsWith('/portal-professor') &&
     !location.pathname.startsWith('/mensagens')
   ) {
-    return <Navigate to="/portal-professor" replace />
+    return <Navigate to="/" replace />
   }
 
   if (
@@ -40,23 +46,19 @@ export default function Layout() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background font-sans text-foreground print:bg-white print:block">
-        <div className="print:hidden shrink-0 flex">
-          <SidebarComponent />
-        </div>
-        <div className="flex-1 flex flex-col w-full h-screen overflow-hidden print:h-auto print:overflow-visible print:block">
-          <div className="print:hidden">
-            <HeaderComponent />
-          </div>
-          <main className="flex-1 overflow-auto bg-slate-50/50 bg-pattern-tri p-4 md:p-6 lg:p-8 print:p-0 print:overflow-visible print:bg-transparent print:block print:w-full">
-            <div className="mx-auto max-w-7xl print:max-w-none print:w-full">
-              <Outlet />
-            </div>
-          </main>
-        </div>
+      <SidebarComponent />
+      <SidebarInset className="h-screen overflow-hidden print:h-auto print:overflow-visible print:block flex flex-col flex-1 bg-background">
         <div className="print:hidden">
-          <AIChatDrawer />
+          <HeaderComponent />
         </div>
+        <div className="flex-1 overflow-auto bg-slate-50/50 bg-pattern-tri p-4 md:p-6 lg:p-8 print:p-0 print:overflow-visible print:bg-transparent print:block print:w-full">
+          <div className="mx-auto max-w-7xl print:max-w-none print:w-full pb-24 md:pb-8">
+            <Outlet />
+          </div>
+        </div>
+      </SidebarInset>
+      <div className="print:hidden">
+        <AIChatDrawer />
       </div>
     </SidebarProvider>
   )

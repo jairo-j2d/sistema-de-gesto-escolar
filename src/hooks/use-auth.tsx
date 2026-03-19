@@ -53,8 +53,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .select('*')
         .eq('user_id', user.id)
         .single()
-        .then(({ data }) => {
-          setProfile(data)
+        .then(({ data, error }) => {
+          if (!error && data) {
+            setProfile(data)
+          }
+          setLoading(false)
+        })
+        .catch(() => {
           setLoading(false)
         })
     }
