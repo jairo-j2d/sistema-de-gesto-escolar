@@ -29,7 +29,8 @@ export default function Login() {
     try {
       const { error } = await signIn(email, password)
       if (error) throw error
-      navigate('/')
+      // Redirecting to the corrected '/profissionais' path instead of triggering a 404
+      navigate('/profissionais')
     } catch (error: any) {
       toast({
         variant: 'destructive',

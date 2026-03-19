@@ -3,11 +3,11 @@ import {
   LayoutDashboard,
   Users,
   GraduationCap,
-  CalendarDays,
   Settings,
   MessageSquare,
   BookOpen,
   FileText,
+  Search,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -27,11 +27,11 @@ import logoImg from '@/assets/icone-cumaru-pe-c3adf.jpg'
 const navItems = [
   { title: 'Dashboard', icon: LayoutDashboard, url: '/' },
   { title: 'Alunos', icon: Users, url: '/alunos' },
-  { title: 'Professores', icon: GraduationCap, url: '/professores' },
-  { title: 'Turmas', icon: BookOpen, url: '/turmas' },
-  { title: 'Calendário', icon: CalendarDays, url: '/calendario' },
+  { title: 'Profissionais', icon: GraduationCap, url: '/profissionais' },
+  { title: 'Portal do Professor', icon: BookOpen, url: '/portal-professor' },
+  { title: 'Consultas', icon: Search, url: '/consultas' },
   { title: 'Relatórios', icon: FileText, url: '/relatorios' },
-  { title: 'Chat', icon: MessageSquare, url: '/chat' },
+  { title: 'Mensagens', icon: MessageSquare, url: '/mensagens' },
   { title: 'Configurações', icon: Settings, url: '/configuracoes' },
 ]
 
@@ -65,7 +65,10 @@ export function SidebarComponent() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={location.pathname === item.url}
+                    isActive={
+                      location.pathname === item.url ||
+                      (item.url !== '/' && location.pathname.startsWith(item.url))
+                    }
                     tooltip={item.title}
                   >
                     <Link to={item.url}>
