@@ -9,9 +9,9 @@ export function PrintFooter() {
       .from('school_settings')
       .select('*')
       .limit(1)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
-        if (data) setSettings(data)
+        setSettings(data || {})
       })
   }, [])
 

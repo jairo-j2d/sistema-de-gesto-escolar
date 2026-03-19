@@ -16,31 +16,50 @@ export default function SettingsPage() {
       .from('school_settings')
       .select('*')
       .limit(1)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
         if (data) setSettings(data)
       })
   }, [])
 
   const handleSave = async () => {
-    if (!settings.id) return
     setSaving(true)
     try {
-      const { error } = await supabase
-        .from('school_settings')
-        .update({
-          school_name: settings.school_name,
-          logo_url: settings.logo_url,
-          address: settings.address,
-          cnpj: settings.cnpj,
-          inep_code: settings.inep_code,
-          portaria: settings.portaria,
-          director_signature_url: settings.director_signature_url,
-          coordinator_signature_url: settings.coordinator_signature_url,
-          secretary_signature_url: settings.secretary_signature_url,
-        })
-        .eq('id', settings.id)
-      if (error) throw error
+      if (settings.id) {
+        const { error } = await supabase
+          .from('school_settings')
+          .update({
+            school_name: settings.school_name,
+            logo_url: settings.logo_url,
+            address: settings.address,
+            cnpj: settings.cnpj,
+            inep_code: settings.inep_code,
+            portaria: settings.portaria,
+            director_signature_url: settings.director_signature_url,
+            coordinator_signature_url: settings.coordinator_signature_url,
+            secretary_signature_url: settings.secretary_signature_url,
+          })
+          .eq('id', settings.id)
+        if (error) throw error
+      } else {
+        const { data, error } = await supabase
+          .from('school_settings')
+          .insert({
+            school_name: settings.school_name || 'Escola',
+            logo_url: settings.logo_url,
+            address: settings.address,
+            cnpj: settings.cnpj,
+            inep_code: settings.inep_code,
+            portaria: settings.portaria,
+            director_signature_url: settings.director_signature_url,
+            coordinator_signature_url: settings.coordinator_signature_url,
+            secretary_signature_url: settings.secretary_signature_url,
+          })
+          .select()
+          .maybeSingle()
+        if (error) throw error
+        if (data) setSettings(data)
+      }
       toast.success('Configurações salvas com sucesso!')
     } catch (e) {
       toast.error('Erro ao salvar as configurações.')

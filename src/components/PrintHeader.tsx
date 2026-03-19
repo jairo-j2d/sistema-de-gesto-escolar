@@ -9,9 +9,17 @@ export function PrintHeader() {
       .from('school_settings')
       .select('*')
       .limit(1)
-      .single()
+      .maybeSingle()
       .then(({ data }) => {
-        if (data) setSettings(data)
+        setSettings(
+          data || {
+            school_name: 'Escola Modelo',
+            address: 'Endereço não configurado',
+            cnpj: '00.000.000/0000-00',
+            inep_code: '00000000',
+            portaria: 'N/A',
+          },
+        )
       })
   }, [])
 
@@ -44,13 +52,13 @@ export function PrintHeader() {
         <img src={settings.logo_url} alt="Logo" className="w-20 h-20 object-contain mb-3" />
       )}
       <h1 className="text-xl font-bold uppercase tracking-wide text-center">
-        {settings.school_name}
+        {settings.school_name || 'Escola Modelo'}
       </h1>
       <div className="text-xs text-center mt-1 text-slate-700 font-medium">
-        <p>{settings.address}</p>
+        <p>{settings.address || 'Endereço não configurado'}</p>
         <p className="mt-1">
-          CNPJ: {settings.cnpj} &bull; INEP: {settings.inep_code} &bull; Portaria:{' '}
-          {settings.portaria}
+          CNPJ: {settings.cnpj || '-'} &bull; INEP: {settings.inep_code || '-'} &bull; Portaria:{' '}
+          {settings.portaria || '-'}
         </p>
       </div>
     </div>
