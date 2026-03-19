@@ -1,11 +1,17 @@
 // AVOID UPDATING THIS FILE DIRECTLY. It is automatically generated.
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: '14.4'
+    PostgrestVersion: "14.4"
   }
   public: {
     Tables: {
@@ -42,11 +48,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'academic_records_student_id_fkey'
-            columns: ['student_id']
+            foreignKeyName: "academic_records_student_id_fkey"
+            columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: 'students'
-            referencedColumns: ['id']
+            referencedRelation: "students"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -74,6 +80,30 @@ export type Database = {
         }
         Relationships: []
       }
+      messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
       professionals: {
         Row: {
           classes: string[] | null
@@ -93,6 +123,7 @@ export type Database = {
           students: string[] | null
           transport_used: string | null
           updated_at: string | null
+          user_id: string | null
           workload: string | null
         }
         Insert: {
@@ -113,6 +144,7 @@ export type Database = {
           students?: string[] | null
           transport_used?: string | null
           updated_at?: string | null
+          user_id?: string | null
           workload?: string | null
         }
         Update: {
@@ -133,6 +165,7 @@ export type Database = {
           students?: string[] | null
           transport_used?: string | null
           updated_at?: string | null
+          user_id?: string | null
           workload?: string | null
         }
         Relationships: []
@@ -209,11 +242,11 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: 'student_occurrences_student_id_fkey'
-            columns: ['student_id']
+            foreignKeyName: "student_occurrences_student_id_fkey"
+            columns: ["student_id"]
             isOneToOne: false
-            referencedRelation: 'students'
-            referencedColumns: ['id']
+            referencedRelation: "students"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -279,7 +312,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
@@ -290,31 +323,33 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, '__InternalSupabase'>
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -323,23 +358,23 @@ export type Tables<
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -348,23 +383,23 @@ export type TablesInsert<
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -373,36 +408,36 @@ export type TablesUpdate<
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
-  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
@@ -410,6 +445,7 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
 
 // ====== DATABASE EXTENDED CONTEXT (auto-generated) ======
 // This section contains actual PostgreSQL column types, constraints, RLS policies,
@@ -436,6 +472,12 @@ export const Constants = {
 //   file_url: text (nullable)
 //   category: text (not null)
 //   created_at: timestamp with time zone (nullable, default: now())
+// Table: messages
+//   id: uuid (not null, default: gen_random_uuid())
+//   sender_id: uuid (not null)
+//   receiver_id: uuid (not null)
+//   content: text (not null)
+//   created_at: timestamp with time zone (nullable, default: now())
 // Table: professionals
 //   id: uuid (not null, default: gen_random_uuid())
 //   name: text (not null)
@@ -455,6 +497,7 @@ export const Constants = {
 //   created_at: timestamp with time zone (nullable, default: now())
 //   updated_at: timestamp with time zone (nullable, default: now())
 //   transport_used: text (nullable)
+//   user_id: uuid (nullable)
 // Table: school_settings
 //   id: uuid (not null, default: gen_random_uuid())
 //   school_name: text (not null, default: ''::text)
@@ -499,8 +542,13 @@ export const Constants = {
 //   FOREIGN KEY academic_records_student_id_fkey: FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
 // Table: generated_reports
 //   PRIMARY KEY generated_reports_pkey: PRIMARY KEY (id)
+// Table: messages
+//   PRIMARY KEY messages_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY messages_receiver_id_fkey: FOREIGN KEY (receiver_id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   FOREIGN KEY messages_sender_id_fkey: FOREIGN KEY (sender_id) REFERENCES auth.users(id) ON DELETE CASCADE
 // Table: professionals
 //   PRIMARY KEY professionals_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY professionals_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 // Table: school_settings
 //   PRIMARY KEY school_settings_pkey: PRIMARY KEY (id)
 // Table: student_occurrences
@@ -512,65 +560,82 @@ export const Constants = {
 
 // --- ROW LEVEL SECURITY POLICIES ---
 // Table: academic_records
-//   Policy "authenticated_delete_academic" (DELETE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_insert_academic" (INSERT, PERMISSIVE) roles={authenticated}
-//     WITH CHECK: true
-//   Policy "authenticated_select_academic" (SELECT, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_update_academic" (UPDATE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//     WITH CHECK: true
+//   Policy "academic_delete" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = 'Administrador'::text)
+//   Policy "academic_insert" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
+//   Policy "academic_select" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: ((get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text])) OR ((get_user_role() = 'Professor(a)'::text) AND (EXISTS ( SELECT 1    FROM (students s      JOIN professionals p ON ((p.user_id = auth.uid())))   WHERE ((s.id = academic_records.student_id) AND (p.grades @> ARRAY[s.grade]) AND (p.classes @> ARRAY[s.class]))))))
+//   Policy "academic_update" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
 // Table: generated_reports
-//   Policy "authenticated_delete_reports" (DELETE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_insert_reports" (INSERT, PERMISSIVE) roles={authenticated}
-//     WITH CHECK: true
-//   Policy "authenticated_select_reports" (SELECT, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_update_reports" (UPDATE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//     WITH CHECK: true
+//   Policy "reports_delete" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = 'Administrador'::text)
+//   Policy "reports_insert" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
+//   Policy "reports_select" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
+//   Policy "reports_update" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
+// Table: messages
+//   Policy "messages_delete" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: ((sender_id = auth.uid()) OR (get_user_role() = 'Administrador'::text))
+//   Policy "messages_insert" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (sender_id = auth.uid())
+//   Policy "messages_select" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: ((sender_id = auth.uid()) OR (receiver_id = auth.uid()) OR (get_user_role() = 'Administrador'::text))
+//   Policy "messages_update" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (sender_id = auth.uid())
 // Table: professionals
-//   Policy "authenticated_delete" (DELETE, PERMISSIVE) roles={authenticated}
+//   Policy "professionals_delete" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = 'Administrador'::text)
+//   Policy "professionals_insert" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
+//   Policy "professionals_select" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
-//   Policy "authenticated_insert" (INSERT, PERMISSIVE) roles={authenticated}
-//     WITH CHECK: true
-//   Policy "authenticated_select" (SELECT, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_update" (UPDATE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//     WITH CHECK: true
+//   Policy "professionals_update" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
 // Table: school_settings
-//   Policy "authenticated_insert" (INSERT, PERMISSIVE) roles={authenticated}
-//     WITH CHECK: true
-//   Policy "authenticated_select" (SELECT, PERMISSIVE) roles={authenticated}
+//   Policy "settings_insert" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (get_user_role() = 'Administrador'::text)
+//   Policy "settings_select" (SELECT, PERMISSIVE) roles={authenticated}
 //     USING: true
-//   Policy "authenticated_update" (UPDATE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//     WITH CHECK: true
+//   Policy "settings_update" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = 'Administrador'::text)
 // Table: student_occurrences
-//   Policy "authenticated_delete_occurrences" (DELETE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_insert_occurrences" (INSERT, PERMISSIVE) roles={authenticated}
-//     WITH CHECK: true
-//   Policy "authenticated_select_occurrences" (SELECT, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_update_occurrences" (UPDATE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//     WITH CHECK: true
+//   Policy "occurrences_delete" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = 'Administrador'::text)
+//   Policy "occurrences_insert" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
+//   Policy "occurrences_select" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
+//   Policy "occurrences_update" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text]))
 // Table: students
-//   Policy "authenticated_delete_students" (DELETE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_insert_students" (INSERT, PERMISSIVE) roles={authenticated}
-//     WITH CHECK: true
-//   Policy "authenticated_select_students" (SELECT, PERMISSIVE) roles={authenticated}
-//     USING: true
-//   Policy "authenticated_update_students" (UPDATE, PERMISSIVE) roles={authenticated}
-//     USING: true
-//     WITH CHECK: true
+//   Policy "students_delete" (DELETE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = 'Administrador'::text)
+//   Policy "students_insert" (INSERT, PERMISSIVE) roles={authenticated}
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
+//   Policy "students_select" (SELECT, PERMISSIVE) roles={authenticated}
+//     USING: ((get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text, 'Coordenador(a)'::text])) OR ((get_user_role() = 'Professor(a)'::text) AND (EXISTS ( SELECT 1    FROM professionals p   WHERE ((p.user_id = auth.uid()) AND (p.grades @> ARRAY[students.grade]) AND (p.classes @> ARRAY[students.class]))))))
+//   Policy "students_update" (UPDATE, PERMISSIVE) roles={authenticated}
+//     USING: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
+//     WITH CHECK: (get_user_role() = ANY (ARRAY['Administrador'::text, 'Diretor(a)'::text, 'Secretário(a)'::text]))
 
 // --- DATABASE FUNCTIONS ---
+// FUNCTION get_user_role()
+//   CREATE OR REPLACE FUNCTION public.get_user_role()
+//    RETURNS text
+//    LANGUAGE sql
+//    SECURITY DEFINER
+//   AS $function$
+//     SELECT role FROM public.professionals WHERE user_id = auth.uid() LIMIT 1;
+//   $function$
+//   
 // FUNCTION update_students_updated_at()
 //   CREATE OR REPLACE FUNCTION public.update_students_updated_at()
 //    RETURNS trigger
@@ -581,7 +646,7 @@ export const Constants = {
 //       RETURN NEW;
 //   END;
 //   $function$
-//
+//   
 
 // --- TRIGGERS ---
 // Table: students
@@ -590,3 +655,4 @@ export const Constants = {
 // --- INDEXES ---
 // Table: students
 //   CREATE UNIQUE INDEX students_enrollment_number_key ON public.students USING btree (enrollment_number)
+
