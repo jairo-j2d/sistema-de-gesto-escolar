@@ -19,13 +19,13 @@ import { useAuth } from '@/hooks/use-auth'
 
 export default function StudentList() {
   const navigate = useNavigate()
-  const { profile } = useAuth()
+  const { role } = useAuth()
   const [search, setSearch] = useState('')
   const [students, setStudents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  const isAdmin = profile?.role === 'Administrador'
-  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(profile?.role || '')
+  const isAdmin = role === 'Administrador'
+  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(role)
 
   const fetchStudents = async () => {
     setLoading(true)

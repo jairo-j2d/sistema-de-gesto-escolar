@@ -19,13 +19,13 @@ import { useAuth } from '@/hooks/use-auth'
 
 export default function ProfessionalList() {
   const navigate = useNavigate()
-  const { profile } = useAuth()
+  const { role } = useAuth()
   const [search, setSearch] = useState('')
   const [professionals, setProfessionals] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  const isAdmin = profile?.role === 'Administrador'
-  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(profile?.role || '')
+  const isAdmin = role === 'Administrador'
+  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(role)
 
   const fetchProfessionals = async () => {
     setLoading(true)

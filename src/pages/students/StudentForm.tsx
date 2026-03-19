@@ -18,11 +18,11 @@ import { useAuth } from '@/hooks/use-auth'
 export default function StudentForm() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { profile } = useAuth()
-  const [data, setData] = useState<any>({})
+  const { role } = useAuth()
+  const [data, setData] = useState<any>({ status: 'Ativo' })
   const [loading, setLoading] = useState(false)
 
-  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(profile?.role || '')
+  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(role)
 
   useEffect(() => {
     if (id) {
@@ -40,6 +40,7 @@ export default function StudentForm() {
               birthDate: d.birth_date,
               motherName: d.parent_name, // Mapping approximation
               classGroup: d.class,
+              status: d.status || 'Ativo',
             })
           }
           if (error) toast.error('Erro ao carregar dados do aluno.')
@@ -57,6 +58,15 @@ export default function StudentForm() {
     if (!canEdit) return toast.error('Sem permissão para salvar alterações.')
     if (!data.name) {
       toast.error('O nome do aluno é obrigatório.')
+      return
+    }
+
+    if (
+      data.cpf &&
+      !/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(data.cpf) &&
+      !/^\d{11}$/.test(data.cpf.replace(/\D/g, ''))
+    ) {
+      toast.error('Formato de CPF inválido. Use 000.000.000-00')
       return
     }
 
@@ -112,7 +122,11 @@ export default function StudentForm() {
       }
       navigate('/alunos')
     } catch (e: any) {
-      toast.error(e.message || 'Erro ao salvar o cadastro.')
+      if (e.code === '23505') {
+        toast.error('Já existe um registro com esta matrícula ou CPF.')
+      } else {
+        toast.error(e.message || 'Erro ao salvar o cadastro.')
+      }
     }
   }
 

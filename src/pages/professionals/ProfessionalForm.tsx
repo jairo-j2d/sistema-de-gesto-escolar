@@ -40,12 +40,18 @@ const DISCIPLINES = [
 export default function ProfessionalForm() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { profile } = useAuth()
-  const [data, setData] = useState<any>({ disciplines: [], grades: [], classes: [], students: [] })
+  const { role: userRole } = useAuth()
+  const [data, setData] = useState<any>({
+    disciplines: [],
+    grades: [],
+    classes: [],
+    students: [],
+    status: 'Ativo',
+  })
   const [loading, setLoading] = useState(false)
   const [studentOptions, setStudentOptions] = useState<any[]>([])
 
-  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(profile?.role || '')
+  const canEdit = ['Administrador', 'Diretor(a)', 'Secretário(a)'].includes(userRole)
 
   useEffect(() => {
     supabase
@@ -60,7 +66,9 @@ export default function ProfessionalForm() {
         .eq('id', id)
         .single()
         .then(({ data: d, error }) => {
-          if (d) setData(d)
+          if (d) {
+            setData({ ...d, status: d.status || 'Ativo' })
+          }
           if (error) toast.error('Erro ao carregar os dados.')
         })
     }
@@ -74,10 +82,26 @@ export default function ProfessionalForm() {
   }
 
   const handleSave = async () => {
-    if (!canEdit) return toast.error('Apenas administradores podem editar registros.')
+    if (!canEdit) return toast.error('Sem permissão para salvar alterações.')
+
+    if (!data.name) {
+      return toast.error('O nome do profissional é obrigatório.')
+    }
+
+    if (
+      data.cpf &&
+      !/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(data.cpf) &&
+      !/^\d{11}$/.test(data.cpf.replace(/\D/g, ''))
+    ) {
+      toast.error('Formato de CPF inválido. Use 000.000.000-00')
+      return
+    }
+
     setLoading(true)
 
-    const { transport_used, ...saveData } = data
+    const { transport_used, updated_at, created_at, id: recordId, user_id, ...saveData } = data
+
+    if (!saveData.status) saveData.status = 'Ativo'
 
     try {
       if (id) {
@@ -89,8 +113,12 @@ export default function ProfessionalForm() {
       }
       toast.success('Profissional salvo com sucesso!')
       navigate('/profissionais')
-    } catch (e) {
-      toast.error('Ocorreu um erro ao salvar.')
+    } catch (e: any) {
+      if (e.code === '23505') {
+        toast.error('Já existe um profissional com este CPF ou Matrícula.')
+      } else {
+        toast.error(e.message || 'Ocorreu um erro ao salvar.')
+      }
     } finally {
       setLoading(false)
     }
@@ -128,6 +156,11 @@ export default function ProfessionalForm() {
         'Vice Diretor(a)',
         'Secretário(a)',
       ],
+    },
+    {
+      l: 'Situação',
+      f: 'status',
+      opts: ['Ativo', 'Inativo'],
     },
   ]
 
