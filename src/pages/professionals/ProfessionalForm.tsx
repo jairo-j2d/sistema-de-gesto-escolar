@@ -93,9 +93,20 @@ export default function ProfessionalForm() {
     {
       l: 'Escolaridade',
       f: 'education',
-      opts: ['Graduação', 'Pós Graduação', 'Mestrado', 'Doutorado'],
+      opts: [
+        'Ensino Médio Completo',
+        'Ensino Médio Incompleto',
+        'Ensino Fundamental completo',
+        'Ensino Fundamental Incompleto',
+        'Analfabeto Funcional',
+      ],
     },
     { l: 'Função', f: 'role', opts: ['Professor(a)', 'Coordenador(a)', 'Apoio Pedagógico'] },
+    {
+      l: 'Transporte Utilizado',
+      f: 'transport_used',
+      opts: ['Ônibus', 'Micro-Ônibus', 'Toyota', 'Van', 'Outros'],
+    },
   ]
 
   return (
